@@ -1,0 +1,88 @@
+import 'package:flutter/material.dart';
+import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/l10n/locale_controller.dart';
+
+class DashboardDrawer extends StatelessWidget {
+  final AppLocalizations i18n;
+
+  const DashboardDrawer({super.key, required this.i18n});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: Colors.teal.shade800,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  i18n.drawerHeader,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SThemeText(text: i18n.drawerSubtitle, color: Colors.white70),
+              ],
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.qr_code_scanner),
+            title: Text(i18n.menuPairDevice),
+            subtitle: Text(i18n.menuPairSubtitle),
+            onTap: () {
+              Navigator.pop(context); // Close drawer
+              // TODO: Route to QR scanning pipeline
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.language),
+            title: Text(i18n.menuLanguage),
+            subtitle: Text(
+              Localizations.localeOf(context).languageCode == 'es'
+                  ? 'English'
+                  : 'Español',
+            ),
+            onTap: () {
+              Navigator.pop(context); // Close drawer
+              
+              // Toggle language logic
+              final currentLanguage = Localizations.localeOf(context).languageCode;
+              LocaleController.instance.setLocale(
+                Locale(currentLanguage == 'es' ? 'en' : 'es'),
+              );
+            },
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.info_outline),
+            title: Text(i18n.menuAbout),
+            onTap: () {
+              Navigator.pop(context); // Close drawer
+              // TODO: Show application credits
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Simple helper to keep styling consistent
+class SThemeText extends StatelessWidget {
+  final String text;
+  final Color color;
+  const SThemeText({super.key, required this.text, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(text, style: TextStyle(color: color, fontSize: 14));
+  }
+}

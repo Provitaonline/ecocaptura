@@ -1,0 +1,47 @@
+// widgets/captura_list.dart
+import 'package:flutter/material.dart';
+import '../controllers/capture_controller.dart';
+import '../../../../core/l10n/app_localizations.dart';
+import './captura_detail_screen.dart'; // Import your new detail screen
+
+class CapturaList extends StatelessWidget {
+  final CaptureController controller;
+  final AppLocalizations i18n;
+
+  const CapturaList({super.key, required this.controller, required this.i18n});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: controller,
+      builder: (context, _) {
+        if (controller.captures.isEmpty) {
+          return Text(i18n.noCapturas, style: const TextStyle(fontStyle: FontStyle.italic));
+        }
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: controller.captures.length,
+          itemBuilder: (context, index) {
+            final item = controller.captures[index];
+            return Card(
+              child: ListTile(
+                title: Text(item['description'] ?? i18n.unnamedCapture),
+                subtitle: Text(item['timestamp'] ?? ''),
+                leading: const Icon(Icons.photo_library),
+                // Add the navigation logic here
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => CapturaDetailScreen(captura: item),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
