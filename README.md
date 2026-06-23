@@ -2,7 +2,7 @@
 
 ## **Currently under development**
 
-A Flutter application for photos-based ecological data collection.
+A Flutter mobile application for photos-based ecological data collection.
 
 ## Features
 
