@@ -1,17 +1,45 @@
 # ecocaptura
 
-A new Flutter project.
+## **Currently under development**
 
-## Getting Started
+A Flutter application for photos-based ecological data collection.
 
-This project is a starting point for a Flutter application.
+## Features
 
-A few resources to get you started if this is your first Flutter project:
+TBD
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Project Structure
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```
+lib/
+├── core/                  # Shared services, utilities, and localization files
+│   ├── l10n/              # ARB dictionaries and manual localization controllers
+│   └── services/          # Device sensor and telemetry managers
+└── features/              # Feature modules
+    └── dashboard/         # Main UI
+```
+
+## Setup
+
+### Prerequisites
+	Flutter SDK
+	Android SDK (API 28+)
+	Xcode (Required for future iOS deployment)
+
+### Commands
+
+Fetch dependencies and generate translation files:
+
+```
+flutter pub get
+flutter gen-l10n
+```
+
+Run the application
+
+```
+flutter run
+```
+---
+
+*This project is being developed with the assistance of Google Gemini.*
