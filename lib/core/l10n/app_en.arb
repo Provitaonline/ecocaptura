@@ -8,5 +8,8 @@
   "menuLanguage": "Change Language",
   "menuLanguageSubtitle": "English / Español",
   "menuAbout": "About App",
-  "btnNewCaptura": "New Capture"
+  "btnNewCaptura": "New Capture",
+  "recentCapturas": "Recent Capturas",
+  "noCapturas": "No captures yet.",
+  "unnamedCapture": "Unnamed Capture"
 }

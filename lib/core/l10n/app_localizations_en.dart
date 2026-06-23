@@ -34,4 +34,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get btnNewCaptura => 'New Capture';
+
+  @override
+  String get recentCapturas => 'Recent Capturas';
+
+  @override
+  String get noCapturas => 'No captures yet.';
+
+  @override
+  String get unnamedCapture => 'Unnamed Capture';
 }
