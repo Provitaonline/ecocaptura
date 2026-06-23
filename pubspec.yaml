@@ -1,0 +1,22 @@
+name: ecocaptura
+description: "A field data capture app for Provita."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  geolocator: ^13.0.0
+  sensors_plus: ^7.0.0 
+  flutter_compass: ^0.8.1
+  camera: ^0.11.0+4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true  
