@@ -1,0 +1,12 @@
+{
+  "@@locale": "en",
+  "appTitle": "ecocaptura",
+  "drawerHeader": "ecocaptura Settings",
+  "drawerSubtitle": "Device Configuration Options",
+  "menuPairDevice": "Pair Device to Site",
+  "menuPairSubtitle": "Scan web QR authentication token",
+  "menuLanguage": "Change Language",
+  "menuLanguageSubtitle": "English / Español",
+  "menuAbout": "About App",
+  "btnNewCaptura": "New Capture"
+}

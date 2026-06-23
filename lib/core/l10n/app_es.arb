@@ -1,0 +1,12 @@
+{
+  "@@locale": "es",
+  "appTitle": "ecocaptura",
+  "drawerHeader": "Ajustes de ecocaptura",
+  "drawerSubtitle": "Opciones de Configuración",
+  "menuPairDevice": "Vincular Dispositivo al Sitio",
+  "menuPairSubtitle": "Escanear token de autenticación QR",
+  "menuLanguage": "Cambiar Idioma",
+  "menuLanguageSubtitle": "English / Español",
+  "menuAbout": "Acerca de la Aplicación",
+  "btnNewCaptura": "Nueva Captura"
+}
