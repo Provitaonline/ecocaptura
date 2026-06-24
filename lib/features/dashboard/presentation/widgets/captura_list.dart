@@ -19,8 +19,6 @@ class CapturaList extends StatelessWidget {
           return Text(i18n.noCapturas, style: const TextStyle(fontStyle: FontStyle.italic));
         }
         return ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
           itemCount: controller.captures.length,
           itemBuilder: (context, index) {
             final item = controller.captures[index];
