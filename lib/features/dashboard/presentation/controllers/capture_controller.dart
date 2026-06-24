@@ -13,8 +13,8 @@ class CaptureController extends ChangeNotifier {
     notifyListeners(); // This triggers the UI rebuild
   }
 
-  Future<void> addCapture(CapturaModel model) async {
-    await _storage.saveCapture(model);
+  Future<void> addCaptura(CapturaModel model) async {
+    await _storage.saveCaptura(model);
     await _storage.addOrUpdateIndex(model);
     await loadCaptures(); // Refresh the list
   }

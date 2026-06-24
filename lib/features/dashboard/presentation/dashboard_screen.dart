@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/l10n/app_localizations.dart';
 import 'controllers/capture_controller.dart';
+import 'new_captura_screen.dart';
 import 'widgets/dashboard_drawer.dart';
 import 'widgets/captura_list.dart';
 
@@ -57,7 +58,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // Ready for NewCaptureScreen navigation
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => NewCaptureScreen(controller: _captureController)),
+          );
         },
         label: Text(i18n.btnNewCaptura),
         icon: const Icon(Icons.add_a_photo),

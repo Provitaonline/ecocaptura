@@ -12,14 +12,14 @@ class StorageManager {
   }
 
   // Save or Update a single full capture
-  Future<void> saveCapture(CapturaModel model) async {
+  Future<void> saveCaptura(CapturaModel model) async {
     final dir = await _getStorageDir();
     final file = File('${dir.path}/capture_${model.id}.json');
     await file.writeAsString(jsonEncode(model.toJson()));
   }
 
   // Load a specific capture
-  Future<CapturaModel?> loadCapture(int id) async {
+  Future<CapturaModel?> loadCaptura(int id) async {
     final dir = await _getStorageDir();
     final file = File('${dir.path}/capture_$id.json');
     if (!await file.exists()) return null;
@@ -29,7 +29,7 @@ class StorageManager {
   }
 
   // Delete a capture (and remove from index)
-  Future<void> deleteCapture(int id) async {
+  Future<void> deleteCaptura(int id) async {
     final dir = await _getStorageDir();
     final file = File('${dir.path}/capture_$id.json');
     if (await file.exists()) await file.delete();
