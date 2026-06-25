@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -19,7 +20,7 @@ class StorageManager {
   }
 
   // Load a specific capture
-  Future<CaptureModel?> loadCaptura(int id) async {
+  Future<CaptureModel?> loadCapture(int id) async {
     final dir = await _getStorageDir();
     final file = File('${dir.path}/capture_$id.json');
     if (!await file.exists()) return null;
@@ -28,13 +29,35 @@ class StorageManager {
     return CaptureModel.fromJson(jsonDecode(jsonString));
   }
 
-  // Delete a capture (and remove from index)
-  Future<void> deleteCaptura(int id) async {
+// Delete a capture (along with its physical images and index entry)
+  Future<void> deleteCapture(int id) async {
+    // 1. Load the full model to extract the list of physical photo files
+    final model = await loadCapture(id);
+    if (model != null) {
+      try {
+        // Loop through every PhotoEntry attached to this capture
+        for (var photo in model.photos) {
+          final pathString = photo.imagePath; // Matches your exact property name
+          
+          if (pathString != null && pathString.isNotEmpty) {
+            final imageFile = File(pathString);
+            if (await imageFile.exists()) {
+              await imageFile.delete();
+              debugPrint("Deleted physical photo file: $pathString");
+            }
+          }
+        }
+      } catch (e) {
+        debugPrint("Failed to clear physical photo files: $e");
+      }
+    }
+
+    // 2. Delete the individual text-based capture JSON file
     final dir = await _getStorageDir();
     final file = File('${dir.path}/capture_$id.json');
     if (await file.exists()) await file.delete();
     
-    // Also remove from index
+    // 3. Remove it from the main index file tracking list
     final index = await getIndex();
     index.removeWhere((item) => item['id'] == id);
     await _saveIndex(index);

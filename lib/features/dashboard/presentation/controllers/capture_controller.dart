@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:ecocaptura/features/dashboard/data/models/capture_model.dart';
 import 'package:ecocaptura/features/dashboard/data/services/storage_manager.dart';
@@ -10,18 +11,35 @@ class CaptureController extends ChangeNotifier {
 
   Future<void> loadCaptures() async {
     _captures = await _storage.getIndex();
-    notifyListeners(); // This triggers the UI rebuild
+    notifyListeners(); 
   }
 
   Future<void> addCapture(CaptureModel model) async {
     await _storage.saveCapture(model);
     await _storage.addOrUpdateIndex(model);
-    await loadCaptures(); // Refresh the list
+    await loadCaptures(); 
   }
 
-  void deleteCapture(dynamic capture) {
-    // Just updates the app memory for now
-    captures.remove(capture);
+  Future<void> deleteCapture(Map<String, dynamic> capture) async {
+    final rawId = capture['id'];
+    if (rawId == null) return;
+    
+    // Safely parse the ID to an int
+    final int id = rawId is int ? rawId : int.parse(rawId.toString());
+
+    // 1. Immediate UI update
+    _captures.remove(capture);
     notifyListeners();
+
+    try {
+      // 2. Offload all file and index deletion to the manager
+      await _storage.deleteCapture(id);
+
+      // 3. Re-sync to confirm everything matches the disk state
+      await loadCaptures();
+    } catch (e) {
+      debugPrint("Error updating state after deletion: $e");
+      await loadCaptures();
+    }
   }
 }
