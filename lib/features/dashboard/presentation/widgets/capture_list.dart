@@ -17,16 +17,21 @@ class CapturaList extends StatelessWidget {
         if (controller.captures.isEmpty) {
           return Text(i18n.noCapturas, style: const TextStyle(fontStyle: FontStyle.italic));
         }
+        
+        // 1. Create the reversed list here
+        final reversedCaptures = controller.captures.reversed.toList();
+
         return ListView.builder(
-          itemCount: controller.captures.length,
+          itemCount: reversedCaptures.length,
           itemBuilder: (context, index) {
-            final item = controller.captures[index];
+            // 2. Use the reversed list to grab the item
+            final item = reversedCaptures[index];
+            
             return Card(
               child: ListTile(
                 title: Text(item['description'] ?? i18n.unnamedCapture),
                 subtitle: Text(item['timestamp'] ?? ''),
                 leading: const Icon(Icons.photo_library),
-                // Add the navigation logic here
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
