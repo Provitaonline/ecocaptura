@@ -13,12 +13,26 @@ build/
 # Android Specifics
 # -------------------------------------------------------------------------
 .gradle/
+android/.gradle/
 local.properties
+android/app/local.properties
 **/AndroidStudioPackages.spec
 _gradle_local_properties_placeholder_
 **/captures/
 **/*.apk
 **/*.aab
+
+# -------------------------------------------------------------------------
+# iOS / macOS Specifics (Merged & Optimized)
+# -------------------------------------------------------------------------
+ios/.generated/
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Pods/
+Pods/
+DerivedData/
 
 # -------------------------------------------------------------------------
 # IDEs and Tools
