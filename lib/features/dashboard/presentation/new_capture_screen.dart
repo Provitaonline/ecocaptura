@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../data/models/capture_model.dart'; 
-import './controllers/capture_controller.dart'; 
+import './controllers/capture_controller.dart';
+import 'camera_capture_screen.dart';
 
 class NewCaptureScreen extends StatefulWidget {
   final CaptureController controller;
@@ -157,8 +159,19 @@ class _NewCaptureScreenState extends State<NewCaptureScreen> {
               color: Colors.grey.shade300,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Center(child: Icon(Icons.photo, color: Colors.grey)),
+            // Updated conditional rendering below:
+            child: photo.imagePath != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.file(
+                      File(photo.imagePath!),
+                      fit: BoxFit.cover, // Ensures image fills the square perfectly
+                    ),
+                  )
+                : const Center(child: Icon(Icons.broken_image, color: Colors.grey)),
           ),
+          
+          // ... Your position close badge button block stays exactly the same
           Positioned(
             right: 0,
             top: 0,
@@ -184,16 +197,25 @@ class _NewCaptureScreenState extends State<NewCaptureScreen> {
   }
 
   /// Builds the empty trailing square template with camera + plus badge icons
-  Widget _buildAddPhotoPlaceholder() {
+  Widget _buildAddPhotoPlaceholder() {  
     return InkWell(
-      onTap: () {
-        setState(() {
-          // Mock photo capture insertion logic preserved intact
-          _photoEntries.add(PhotoEntry(
-            id: DateTime.now().toString(),
-            description: "Photo #${_photoEntries.length + 1}",
-          ));
-        });
+      onTap: () async {
+        // Navigate to camera and await the captured file path string
+        final String? capturedPath = await Navigator.push<String>(
+          context,
+          MaterialPageRoute(builder: (context) => const CameraCaptureScreen()),
+        );
+
+        // If a photo was actually taken (not aborted)
+        if (capturedPath != null && mounted) {
+          setState(() {
+            _photoEntries.add(PhotoEntry(
+              id: DateTime.now().millisecondsSinceEpoch.toString(),
+              imagePath: capturedPath,
+              timestamp: DateTime.now(),
+            ));
+          });
+        }
       },
       borderRadius: BorderRadius.circular(8),
       child: Container(
