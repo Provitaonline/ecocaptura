@@ -18,4 +18,10 @@ class CaptureController extends ChangeNotifier {
     await _storage.addOrUpdateIndex(model);
     await loadCaptures(); // Refresh the list
   }
+
+  void deleteCapture(dynamic capture) {
+    // Just updates the app memory for now
+    captures.remove(capture);
+    notifyListeners();
+  }
 }

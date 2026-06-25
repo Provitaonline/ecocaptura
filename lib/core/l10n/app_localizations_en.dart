@@ -33,13 +33,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuAbout => 'About App';
 
   @override
-  String get btnNewCaptura => 'New Capture';
+  String get btnNewCapture => 'New Capture';
 
   @override
-  String get recentCapturas => 'Recent Captures';
+  String get recentCaptures => 'Recent Captures';
 
   @override
-  String get noCapturas => 'No captures yet.';
+  String get noCaptures => 'No captures yet.';
 
   @override
   String get unnamedCapture => 'Unnamed Capture';

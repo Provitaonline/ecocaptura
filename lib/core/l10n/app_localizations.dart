@@ -146,23 +146,23 @@ abstract class AppLocalizations {
   /// **'About App'**
   String get menuAbout;
 
-  /// No description provided for @btnNewCaptura.
+  /// No description provided for @btnNewCapture.
   ///
   /// In en, this message translates to:
   /// **'New Capture'**
-  String get btnNewCaptura;
+  String get btnNewCapture;
 
-  /// No description provided for @recentCapturas.
+  /// No description provided for @recentCaptures.
   ///
   /// In en, this message translates to:
   /// **'Recent Captures'**
-  String get recentCapturas;
+  String get recentCaptures;
 
-  /// No description provided for @noCapturas.
+  /// No description provided for @noCaptures.
   ///
   /// In en, this message translates to:
   /// **'No captures yet.'**
-  String get noCapturas;
+  String get noCaptures;
 
   /// No description provided for @unnamedCapture.
   ///

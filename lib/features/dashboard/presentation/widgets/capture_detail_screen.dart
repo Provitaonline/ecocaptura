@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class CapturaDetailScreen extends StatelessWidget {
+class CaptureDetailScreen extends StatelessWidget {
   final Map<String, dynamic> capture;
 
-  const CapturaDetailScreen({super.key, required this.capture});
+  const CaptureDetailScreen({super.key, required this.capture});
 
   @override
   Widget build(BuildContext context) {

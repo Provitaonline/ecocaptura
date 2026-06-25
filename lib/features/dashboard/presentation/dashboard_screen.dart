@@ -48,10 +48,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(i18n.recentCapturas, style: Theme.of(context).textTheme.titleLarge),
+            Text(i18n.recentCaptures, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 10),
             Expanded(
-              child: CapturaList(controller: _captureController, i18n: i18n),
+              child: CaptureList(controller: _captureController, i18n: i18n),
             ),
           ],
         ),
@@ -62,7 +62,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             MaterialPageRoute(builder: (_) => NewCaptureScreen(controller: _captureController)),
           );
         },
-        label: Text(i18n.btnNewCaptura),
+        label: Text(i18n.btnNewCapture),
         icon: const Icon(Icons.add_a_photo),
         backgroundColor: Colors.teal.shade300,
         foregroundColor: Colors.black,
