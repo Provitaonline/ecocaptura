@@ -155,7 +155,7 @@ abstract class AppLocalizations {
   /// No description provided for @recentCapturas.
   ///
   /// In en, this message translates to:
-  /// **'Recent Capturas'**
+  /// **'Recent Captures'**
   String get recentCapturas;
 
   /// No description provided for @noCapturas.
