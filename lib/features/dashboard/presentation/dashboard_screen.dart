@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../core/l10n/app_localizations.dart';
 import 'controllers/capture_controller.dart';
-import 'new_captura_screen.dart';
+import 'new_capture_screen.dart';
 import 'widgets/dashboard_drawer.dart';
-import 'widgets/captura_list.dart';
+import 'widgets/capture_list.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});

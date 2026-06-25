@@ -1,8 +1,7 @@
-// widgets/captura_list.dart
 import 'package:flutter/material.dart';
 import '../controllers/capture_controller.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import './captura_detail_screen.dart'; // Import your new detail screen
+import 'capture_detail_screen.dart'; // Import your new detail screen
 
 class CapturaList extends StatelessWidget {
   final CaptureController controller;
@@ -31,7 +30,7 @@ class CapturaList extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => CapturaDetailScreen(captura: item),
+                      builder: (context) => CapturaDetailScreen(capture: item),
                     ),
                   );
                 },
