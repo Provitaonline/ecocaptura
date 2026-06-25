@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'captura_model.dart';
+part of 'capture_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -54,7 +54,7 @@ Map<String, dynamic> _$PhotoEntryToJson(PhotoEntry instance) =>
       'timestamp': instance.timestamp?.toIso8601String(),
     };
 
-CapturaModel _$CapturaModelFromJson(Map<String, dynamic> json) => CapturaModel(
+CaptureModel _$CaptureModelFromJson(Map<String, dynamic> json) => CaptureModel(
   id: (json['id'] as num?)?.toInt(),
   remoteId: json['remoteId'] as String?,
   description: json['description'] as String?,
@@ -67,7 +67,7 @@ CapturaModel _$CapturaModelFromJson(Map<String, dynamic> json) => CapturaModel(
       : DateTime.parse(json['timestamp'] as String),
 );
 
-Map<String, dynamic> _$CapturaModelToJson(CapturaModel instance) =>
+Map<String, dynamic> _$CaptureModelToJson(CaptureModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'remoteId': instance.remoteId,

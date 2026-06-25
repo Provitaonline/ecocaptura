@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:ecocaptura/features/dashboard/data/models/captura_model.dart';
+import 'package:ecocaptura/features/dashboard/data/models/capture_model.dart';
 import 'package:ecocaptura/features/dashboard/data/services/storage_manager.dart';
 
 class CaptureController extends ChangeNotifier {
@@ -13,8 +13,8 @@ class CaptureController extends ChangeNotifier {
     notifyListeners(); // This triggers the UI rebuild
   }
 
-  Future<void> addCaptura(CapturaModel model) async {
-    await _storage.saveCaptura(model);
+  Future<void> addCapture(CaptureModel model) async {
+    await _storage.saveCapture(model);
     await _storage.addOrUpdateIndex(model);
     await loadCaptures(); // Refresh the list
   }

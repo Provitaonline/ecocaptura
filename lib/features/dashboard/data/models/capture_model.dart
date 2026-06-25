@@ -1,8 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'captura_model.g.dart';
+part 'capture_model.g.dart';
 
-enum CapturaStatus {
+enum CaptureStatus {
   inProgress,
   ready,
   uploaded,
@@ -42,7 +42,7 @@ class PhotoEntry {
 }
 
 @JsonSerializable(explicitToJson: true)
-class CapturaModel {
+class CaptureModel {
   int? id;
   String? remoteId;
   String? description;
@@ -50,16 +50,16 @@ class CapturaModel {
 
   // Custom converter for the enum
   @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)
-  CapturaStatus status;
+  CaptureStatus status;
   
   DateTime? timestamp;
 
-  CapturaModel({this.id, this.remoteId, this.description, required this.photos, required this.status, this.timestamp});
+  CaptureModel({this.id, this.remoteId, this.description, required this.photos, required this.status, this.timestamp});
 
-  factory CapturaModel.fromJson(Map<String, dynamic> json) => _$CapturaModelFromJson(json);
-  Map<String, dynamic> toJson() => _$CapturaModelToJson(this);
+  factory CaptureModel.fromJson(Map<String, dynamic> json) => _$CaptureModelFromJson(json);
+  Map<String, dynamic> toJson() => _$CaptureModelToJson(this);
 }
 
 // Helpers for the JSON converter
-CapturaStatus _statusFromJson(int index) => CapturaStatus.values[index];
-int _statusToJson(CapturaStatus status) => status.index;
+CaptureStatus _statusFromJson(int index) => CaptureStatus.values[index];
+int _statusToJson(CaptureStatus status) => status.index;

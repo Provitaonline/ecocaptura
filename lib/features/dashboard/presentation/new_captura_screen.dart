@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 // Adjust these paths based on where your model and controller are located
-import '../data/models/captura_model.dart'; 
+import '../data/models/capture_model.dart'; 
 import './controllers/capture_controller.dart'; 
 
 class NewCaptureScreen extends StatefulWidget {
@@ -20,16 +20,16 @@ class _NewCaptureScreenState extends State<NewCaptureScreen> {
     final int uniqueId = DateTime.now().millisecondsSinceEpoch.remainder(1000000);
     
     // Construct the final model
-    final newCaptura = CapturaModel(
+    final newCapture = CaptureModel(
       id: uniqueId,
       description: _descController.text,
       photos: _photoEntries,
-      status: CapturaStatus.ready,
+      status: CaptureStatus.ready,
       timestamp: DateTime.now(),
     );
 
     // Save to controller
-    widget.controller.addCaptura(newCaptura);
+    widget.controller.addCapture(newCapture);
 
     // Go back to the list
     if (mounted) {
