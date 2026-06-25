@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:ecocaptura/features/dashboard/data/models/capture_model.dart';
 import 'package:ecocaptura/features/dashboard/data/services/storage_manager.dart';
