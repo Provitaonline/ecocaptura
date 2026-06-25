@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// Adjust these paths based on where your model and controller are located
 import '../data/models/capture_model.dart'; 
 import './controllers/capture_controller.dart'; 
 
@@ -19,7 +18,7 @@ class _NewCaptureScreenState extends State<NewCaptureScreen> {
   void _finishCapture() {
     final int uniqueId = DateTime.now().millisecondsSinceEpoch.remainder(1000000);
     
-    // Construct the final model
+    // Construct the final model (Preserved from original)
     final newCapture = CaptureModel(
       id: uniqueId,
       description: _descController.text,
@@ -48,108 +47,177 @@ class _NewCaptureScreenState extends State<NewCaptureScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("New Capture"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: _finishCapture,
-            tooltip: "Save Capture",
-          )
-        ],
+        // 5. ABORT MECHANISM: Replaced the standard back arrow with a distinct close 'X'
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          tooltip: "Abort Capture",
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       // Wrapped in GestureDetector to dismiss keyboard on tap
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         behavior: HitTestBehavior.opaque,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+        child: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextField(
-                controller: _descController,
-                textInputAction: TextInputAction.done,
-                onSubmitted: (_) => FocusScope.of(context).unfocus(),
-                decoration: const InputDecoration(
-                  labelText: "Description",
-                  border: OutlineInputBorder(),
-                  hintText: "Enter details about this observation...",
-                ),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 24),
-              Text("Photos", style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 10),
-              
-              // Photo Grid
+              // Scrollable area for input forms so keyboard doesn't cause overflows
               Expanded(
-                child: _photoEntries.isEmpty
-                    ? Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(8),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Photos", style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 10),
+                      
+                      // 2. HORIZONTALLY SCROLLABLE THUMBNAIL ROW
+                      SizedBox(
+                        height: 85, // Fixed square container bounds
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          // Length is photos list + 1 permanent trailing adder item
+                          itemCount: _photoEntries.length + 1,
+                          itemBuilder: (context, index) {
+                            // Render trailing 'Add Photo' button placeholder
+                            if (index == _photoEntries.length) {
+                              return _buildAddPhotoPlaceholder();
+                            }
+
+                            // Render existing square photo thumbnails
+                            final photo = _photoEntries[index];
+                            return _buildPhotoThumbnail(photo, index);
+                          },
                         ),
-                        child: const Center(child: Text("No photos added yet")),
-                      )
-                    : GridView.builder(
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: 8,
-                          mainAxisSpacing: 8,
-                        ),
-                        itemCount: _photoEntries.length,
-                        itemBuilder: (context, index) {
-                          return Stack(
-                            children: [
-                              // Thumbnail container
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: const Center(child: Icon(Icons.photo)),
-                              ),
-                              // Remove button
-                              Positioned(
-                                right: 0,
-                                top: 0,
-                                child: IconButton(
-                                  icon: const Icon(Icons.remove_circle, color: Colors.red),
-                                  onPressed: () {
-                                    setState(() {
-                                      _photoEntries.removeAt(index);
-                                    });
-                                  },
-                                ),
-                              ),
-                            ],
-                          );
-                        },
                       ),
+                      
+                      const SizedBox(height: 28),
+                      
+                      // 3. DESCRIPTION FIELD (BELOW THE THUMBNAILS)
+                      Text("Details", style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 10),
+                      TextField(
+                        controller: _descController,
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (_) => FocusScope.of(context).unfocus(),
+                        decoration: const InputDecoration(
+                          labelText: "Description",
+                          border: OutlineInputBorder(),
+                          hintText: "Enter details about this observation...",
+                          alignLabelWithHint: true,
+                        ),
+                        maxLines: 3,
+                      ),
+                    ],
+                  ),
+                ),
               ),
               
-              const SizedBox(height: 16),
-              
-              // Add Photo Button
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.add_a_photo),
-                  label: const Text("Add Photo"),
-                  onPressed: () {
-                    setState(() {
-                      // Placeholder logic until camera is wired up
-                      _photoEntries.add(PhotoEntry(
-                        id: DateTime.now().toString(),
-                        description: "Photo #${_photoEntries.length + 1}",
-                      ));
-                    });
-                  },
+              // 1 & 4. SAVE CAPTURE BUTTON ANCHORED AT THE BOTTOM
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: _finishCapture,
+                    child: const Text(
+                      "Save Capture",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  /// Builds a captured square photo preview with a built-in delete button
+  Widget _buildPhotoThumbnail(PhotoEntry photo, int index) {
+    return Container(
+      width: 85,
+      height: 85,
+      margin: const EdgeInsets.only(right: 10),
+      child: Stack(
+        children: [
+          Container(
+            width: 85,
+            height: 85,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Center(child: Icon(Icons.photo, color: Colors.grey)),
+          ),
+          Positioned(
+            right: 0,
+            top: 0,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _photoEntries.removeAt(index);
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.remove_circle, color: Colors.red, size: 20),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the empty trailing square template with camera + plus badge icons
+  Widget _buildAddPhotoPlaceholder() {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          // Mock photo capture insertion logic preserved intact
+          _photoEntries.add(PhotoEntry(
+            id: DateTime.now().toString(),
+            description: "Photo #${_photoEntries.length + 1}",
+          ));
+        });
+      },
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        width: 85,
+        height: 85,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          border: Border.all(color: Colors.grey.shade400, style: BorderStyle.solid),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Icon(Icons.camera_alt, size: 28, color: Colors.grey.shade600),
+            Positioned(
+              right: 6,
+              bottom: 6,
+              child: CircleAvatar(
+                radius: 9,
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                child: const Icon(Icons.add, size: 12, color: Colors.white),
+              ),
+            )
+          ],
         ),
       ),
     );
