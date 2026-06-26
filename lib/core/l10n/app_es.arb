@@ -11,5 +11,6 @@
   "btnNewCapture": "Nueva Captura",
   "recentCaptures": "Capturas Recientes",
   "noCaptures": "No hay capturas aún.",
-  "unnamedCapture": "Captura sin nombre"
+  "unnamedCapture": "Captura sin nombre",
+  "cardinalDirections": "N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSO,SO,OSO,O,ONO,NO,NNO"
 }

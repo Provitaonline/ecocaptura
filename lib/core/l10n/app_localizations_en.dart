@@ -43,4 +43,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unnamedCapture => 'Unnamed Capture';
+
+  @override
+  String get cardinalDirections =>
+      'N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW';
 }

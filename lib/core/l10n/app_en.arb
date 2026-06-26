@@ -11,5 +11,6 @@
   "btnNewCapture": "New Capture",
   "recentCaptures": "Recent Captures",
   "noCaptures": "No captures yet.",
-  "unnamedCapture": "Unnamed Capture"
+  "unnamedCapture": "Unnamed Capture",
+  "cardinalDirections": "N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW"
 }

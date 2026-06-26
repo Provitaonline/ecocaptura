@@ -169,6 +169,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unnamed Capture'**
   String get unnamedCapture;
+
+  /// No description provided for @cardinalDirections.
+  ///
+  /// In en, this message translates to:
+  /// **'N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW'**
+  String get cardinalDirections;
 }
 
 class _AppLocalizationsDelegate

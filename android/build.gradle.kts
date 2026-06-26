@@ -22,3 +22,24 @@ subprojects {
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
+
+subprojects {
+    val configureAndroidSdkOverride = {
+        if (hasProperty("android")) {
+            val androidExtension = extensions.findByName("android") as? com.android.build.gradle.BaseExtension
+            androidExtension?.apply {
+                compileSdkVersion(36)
+            }
+        }
+    }
+
+    // If the plugin has already finished evaluating, patch it right now.
+    // Otherwise, safely schedule it for its evaluation completion.
+    if (state.executed) {
+        configureAndroidSdkOverride()
+    } else {
+        afterEvaluate {
+            configureAndroidSdkOverride()
+        }
+    }
+}
