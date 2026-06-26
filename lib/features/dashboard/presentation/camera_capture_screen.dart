@@ -9,6 +9,10 @@ class CameraCaptureScreen extends StatefulWidget {
 }
 
 class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
+  double _minZoomLevel = 1.0;
+  double _maxZoomLevel = 1.0;
+  double _currentZoomLevel = 1.0;
+  double _baseZoomLevel = 1.0;
   CameraController? _controller;
   List<CameraDescription>? _cameras;
   bool _isInitializing = true;
@@ -31,6 +35,8 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
         );
 
         await _controller!.initialize();
+        _minZoomLevel = await _controller!.getMinZoomLevel();
+        _maxZoomLevel = await _controller!.getMaxZoomLevel();
       }
     } catch (e) {
       debugPrint("Camera initialization error: $e");
@@ -85,9 +91,27 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            // 1. The Full Camera Preview
+            // 1. The Full Camera Preview (Now with Pinch-to-Zoom)
             Center(
-              child: CameraPreview(_controller!),
+              child: GestureDetector(
+                onScaleStart: (details) {
+                  _baseZoomLevel = _currentZoomLevel;
+                },
+                onScaleUpdate: (details) async {
+                  double newZoom = _baseZoomLevel * details.scale;
+                  if (newZoom < _minZoomLevel) newZoom = _minZoomLevel;
+                  if (newZoom > _maxZoomLevel) newZoom = _maxZoomLevel;
+
+                  // Only talk to the native camera if the zoom changed by more than 0.05
+                  if ((newZoom - _currentZoomLevel).abs() > 0.05) {
+                    setState(() {
+                      _currentZoomLevel = newZoom;
+                    });
+                    await _controller!.setZoomLevel(newZoom);
+                  }
+                },
+                child: CameraPreview(_controller!),
+              ),
             ),
 
             // FUTURE INCREMENT: This is exactly where your semi-transparent 
