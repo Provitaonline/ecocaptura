@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/services/telemetry_service.dart';
 import '../../../utils/geo_utils.dart';
@@ -87,6 +88,21 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
     if (_controller == null || !_controller!.value.isInitialized) return;
     try {
       final XFile photoFile = await _controller!.takePicture();
+
+      // Attempt to get location (wrapped in try-catch in case of disabled GPS)
+      Position? position;
+      try {
+        const LocationSettings locationSettings =  LocationSettings(
+          accuracy: LocationAccuracy.high, 
+          distanceFilter: 0, 
+        );
+
+        position = await Geolocator.getCurrentPosition(
+          locationSettings: locationSettings,
+        );
+      } catch (e) {
+        debugPrint("Could not get location: $e");
+      }
       
       // Construct the metadata-rich object
       final frame = _telemetryNotifier.value;
@@ -95,6 +111,10 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
         heading: frame.heading,
         tiltY: frame.tilt,
         rawSensors: _lastRawTelemetry,
+        gpsCoordinates: position != null 
+          ? "${position.latitude},${position.longitude}" 
+          : null,
+        gpsAccuracy: position?.accuracy,
         timestamp: DateTime.now(),
       );
       
