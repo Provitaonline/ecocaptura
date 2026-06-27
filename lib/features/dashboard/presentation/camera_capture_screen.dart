@@ -5,6 +5,7 @@ import 'package:camera/camera.dart';
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/services/telemetry_service.dart';
 import '../../../utils/geo_utils.dart';
+import '../data/models/capture_model.dart'; // Ensure this points to your PhotoEntry file
 
 class CameraCaptureScreen extends StatefulWidget {
   const CameraCaptureScreen({Key? key}) : super(key: key);
@@ -19,6 +20,9 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
   
   final TelemetryService _telemetryService = TelemetryService();
   StreamSubscription<TelemetryFrame>? _telemetrySubscription;
+  
+  // Cache the latest raw data for the moment of capture
+  RawTelemetry? _lastRawTelemetry;
   
   final ValueNotifier<TelemetryFrame> _telemetryNotifier = ValueNotifier(
     TelemetryFrame(heading: 0.0, tilt: 0.0),
@@ -47,6 +51,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
         backCamera,
         ResolutionPreset.medium,
         enableAudio: false,
+        imageFormatGroup: ImageFormatGroup.yuv420,
       );
 
       setState(() {
@@ -64,8 +69,8 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
 
   void _initializeTelemetry() {
     _telemetrySubscription = _telemetryService.startTelemetryStream().listen((frame) {
-      // Direct assignment bypasses setState, stopping entire-screen rebuilds
       _telemetryNotifier.value = frame;
+      _lastRawTelemetry = frame.rawTelemetry; // Cache raw sensors
     });
   }
 
@@ -74,7 +79,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
     _telemetrySubscription?.cancel();
     _controller?.dispose();
     _telemetryService.dispose();
-    _telemetryNotifier.dispose(); // Added: Clean up the notifier
+    _telemetryNotifier.dispose();
     super.dispose();
   }
 
@@ -82,7 +87,18 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
     if (_controller == null || !_controller!.value.isInitialized) return;
     try {
       final XFile photoFile = await _controller!.takePicture();
-      if (mounted) Navigator.pop(context, photoFile.path);
+      
+      // Construct the metadata-rich object
+      final frame = _telemetryNotifier.value;
+      final entry = PhotoEntry(
+        imagePath: photoFile.path,
+        heading: frame.heading,
+        tiltY: frame.tilt,
+        rawSensors: _lastRawTelemetry,
+        timestamp: DateTime.now(),
+      );
+      
+      if (mounted) Navigator.pop(context, entry);
     } catch (e) {
       debugPrint("Error taking picture: $e");
     }
@@ -110,7 +126,6 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                       final maxZoom = await _controller!.getMaxZoomLevel();
                       double newZoom = (_baseZoomLevel * details.scale).clamp(minZoom, maxZoom);
                       
-                      // Update the level and communicate with native bridge
                       if ((newZoom - _currentZoomLevel).abs() > 0.05) {
                         _currentZoomLevel = newZoom;
                         await _controller!.setZoomLevel(newZoom);
@@ -120,7 +135,6 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                   ),
                 ),
 
-                // NEW: Targeted UI rebuilds via ValueListenableBuilder
                 SafeArea(
                   child: Align(
                     alignment: Alignment.topRight,
@@ -146,7 +160,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                                 Text('${frame.heading.toStringAsFixed(1)}° $cardinal', 
                                   style: const TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Courier', fontWeight: FontWeight.bold)),
                                 Text('Tilt: ${frame.tilt.toStringAsFixed(1)}°', 
-                                  style: TextStyle(color: frame.tilt.abs() < 5 ? Colors.greenAccent : Colors.white70, fontSize: 14, fontFamily: 'Courier')),
+                                  style: const TextStyle(color: Colors.greenAccent, fontSize: 14, fontFamily: 'Courier')),
                               ],
                             ),
                           );

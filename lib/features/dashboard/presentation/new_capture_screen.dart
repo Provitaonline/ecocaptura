@@ -200,20 +200,18 @@ class _NewCaptureScreenState extends State<NewCaptureScreen> {
   Widget _buildAddPhotoPlaceholder() {  
     return InkWell(
       onTap: () async {
-        // Navigate to camera and await the captured file path string
-        final String? capturedPath = await Navigator.push<String>(
+        // 1. Await the full PhotoEntry object
+        final PhotoEntry? newEntry = await Navigator.push<PhotoEntry>(
           context,
           MaterialPageRoute(builder: (context) => const CameraCaptureScreen()),
         );
 
-        // If a photo was actually taken (not aborted)
-        if (capturedPath != null && mounted) {
+        // 2. If a photo was captured, add the returned object to the list
+        if (newEntry != null && mounted) {
           setState(() {
-            _photoEntries.add(PhotoEntry(
-              id: DateTime.now().millisecondsSinceEpoch.toString(),
-              imagePath: capturedPath,
-              timestamp: DateTime.now(),
-            ));
+            newEntry.id = DateTime.now().millisecondsSinceEpoch.toString();
+            
+            _photoEntries.add(newEntry);
           });
         }
       },
