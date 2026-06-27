@@ -12,5 +12,12 @@
   "recentCaptures": "Recent Captures",
   "noCaptures": "No captures yet.",
   "unnamedCapture": "Unnamed Capture",
+  "newCapture": "New Capture",
+  "photos": "Photos",
+  "captureDetails": "Capture Details",
+  "description": "Description",
+  "descriptionHint": "Enter capture description",
+  "saveCapture": "Save capture",
+  "abortCapture": "Abort capture",
   "cardinalDirections": "N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW"
 }

@@ -170,6 +170,48 @@ abstract class AppLocalizations {
   /// **'Unnamed Capture'**
   String get unnamedCapture;
 
+  /// No description provided for @newCapture.
+  ///
+  /// In en, this message translates to:
+  /// **'New Capture'**
+  String get newCapture;
+
+  /// No description provided for @photos.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get photos;
+
+  /// No description provided for @captureDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture Details'**
+  String get captureDetails;
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @descriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter capture description'**
+  String get descriptionHint;
+
+  /// No description provided for @saveCapture.
+  ///
+  /// In en, this message translates to:
+  /// **'Save capture'**
+  String get saveCapture;
+
+  /// No description provided for @abortCapture.
+  ///
+  /// In en, this message translates to:
+  /// **'Abort capture'**
+  String get abortCapture;
+
   /// No description provided for @cardinalDirections.
   ///
   /// In en, this message translates to:

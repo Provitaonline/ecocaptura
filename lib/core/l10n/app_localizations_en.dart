@@ -45,6 +45,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unnamedCapture => 'Unnamed Capture';
 
   @override
+  String get newCapture => 'New Capture';
+
+  @override
+  String get photos => 'Photos';
+
+  @override
+  String get captureDetails => 'Capture Details';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get descriptionHint => 'Enter capture description';
+
+  @override
+  String get saveCapture => 'Save capture';
+
+  @override
+  String get abortCapture => 'Abort capture';
+
+  @override
   String get cardinalDirections =>
       'N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW';
 }

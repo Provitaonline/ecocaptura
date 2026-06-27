@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import '../../../core/l10n/app_localizations.dart';
 import '../data/models/capture_model.dart'; 
 import './controllers/capture_controller.dart';
 import 'camera_capture_screen.dart';
@@ -46,13 +47,13 @@ class _NewCaptureScreenState extends State<NewCaptureScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final i18n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("New Capture"),
-        // 5. ABORT MECHANISM: Replaced the standard back arrow with a distinct close 'X'
+        title: Text(i18n.newCapture),
         leading: IconButton(
           icon: const Icon(Icons.close),
-          tooltip: "Abort Capture",
+          tooltip: i18n.abortCapture,
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -70,7 +71,7 @@ class _NewCaptureScreenState extends State<NewCaptureScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Photos", style: Theme.of(context).textTheme.titleMedium),
+                      Text(i18n.photos, style: Theme.of(context).textTheme.titleMedium),
                       const SizedBox(height: 10),
                       
                       // 2. HORIZONTALLY SCROLLABLE THUMBNAIL ROW
@@ -96,16 +97,16 @@ class _NewCaptureScreenState extends State<NewCaptureScreen> {
                       const SizedBox(height: 28),
                       
                       // 3. DESCRIPTION FIELD (BELOW THE THUMBNAILS)
-                      Text("Details", style: Theme.of(context).textTheme.titleMedium),
+                      Text(i18n.captureDetails, style: Theme.of(context).textTheme.titleMedium),
                       const SizedBox(height: 10),
                       TextField(
                         controller: _descController,
                         textInputAction: TextInputAction.done,
                         onSubmitted: (_) => FocusScope.of(context).unfocus(),
-                        decoration: const InputDecoration(
-                          labelText: "Description",
-                          border: OutlineInputBorder(),
-                          hintText: "Enter details about this observation...",
+                        decoration: InputDecoration(
+                          labelText: i18n.description,
+                          border: const OutlineInputBorder(),
+                          hintText: i18n.descriptionHint,
                           alignLabelWithHint: true,
                         ),
                         maxLines: 3,
@@ -130,9 +131,9 @@ class _NewCaptureScreenState extends State<NewCaptureScreen> {
                       ),
                     ),
                     onPressed: _finishCapture,
-                    child: const Text(
-                      "Save Capture",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    child: Text(
+                      i18n.saveCapture,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -171,7 +172,6 @@ class _NewCaptureScreenState extends State<NewCaptureScreen> {
                 : const Center(child: Icon(Icons.broken_image, color: Colors.grey)),
           ),
           
-          // ... Your position close badge button block stays exactly the same
           Positioned(
             right: 0,
             top: 0,

@@ -12,5 +12,12 @@
   "recentCaptures": "Capturas Recientes",
   "noCaptures": "No hay capturas aún.",
   "unnamedCapture": "Captura sin nombre",
+  "newCapture": "Nueva Captura",
+  "photos": "Fotos",
+  "captureDetails": "Detalles de captura",
+  "description": "Descripción",
+  "descriptionHint": "Describe esta captura",
+  "saveCapture": "Guardar captura",
+  "abortCapture": "Abandonar captura",
   "cardinalDirections": "N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSO,SO,OSO,O,ONO,NO,NNO"
 }
