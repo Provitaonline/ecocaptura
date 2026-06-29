@@ -12,11 +12,12 @@ TBD
 
 ```
 lib/
-├── core/                  # Shared services, utilities, and localization files
+├── core/                  # Shared services and localization files
 │   ├── l10n/              # ARB dictionaries and manual localization controllers
 │   └── services/          # Device sensor and telemetry managers
-└── features/              # Feature modules
-    └── dashboard/         # Main UI
+├── features/              # Feature modules
+│   └── dashboard/         # Main UI
+└── utils/                 # Global helper classes, constants, and extensions
 ```
 
 ## Setup
