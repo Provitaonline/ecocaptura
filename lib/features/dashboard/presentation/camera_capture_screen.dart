@@ -8,7 +8,7 @@ import '../../../utils/geo_utils.dart';
 import '../data/models/capture_model.dart'; 
 
 class CameraCaptureScreen extends StatefulWidget {
-  const CameraCaptureScreen({Key? key}) : super(key: key);
+  const CameraCaptureScreen({super.key});
 
   @override
   State<CameraCaptureScreen> createState() => _CameraCaptureScreenState();
@@ -180,7 +180,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                             decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.6),
+                              color: Colors.black.withValues(alpha: 0.6),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Column(
