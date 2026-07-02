@@ -31,7 +31,19 @@ class TelemetryService {
   StreamSubscription? _gyroSub;
   StreamSubscription<Position>? _locationSub;
 
+  Future<void> _checkPermissions() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return; // Handle this case by showing a dialog
+    }
+  }
+
   TelemetryService() {
+    _checkPermissions();
+    
     _accelSub = accelerometerEventStream().listen((e) {
       _accX = e.x; _accY = e.y; _accZ = e.z;
     });

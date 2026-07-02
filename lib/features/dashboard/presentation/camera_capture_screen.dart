@@ -73,6 +73,31 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
     });
   }
 
+  Widget _buildGpsStatus(double? accuracy) {
+    if (accuracy == null) {
+      return const Icon(Icons.gps_off, color: Colors.grey, size: 14);
+    }
+
+    Color statusColor;
+    if (accuracy < 10) {
+      statusColor = Colors.greenAccent;
+    } else if (accuracy < 50) {
+      statusColor = Colors.amber;
+    } else {
+      statusColor = Colors.redAccent;
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.gps_fixed, color: statusColor, size: 14),
+        const SizedBox(width: 4),
+        Text('${accuracy.toInt()}m', 
+            style: TextStyle(color: statusColor, fontSize: 12, fontFamily: 'Courier')),
+      ],
+    );
+  }
+
   @override
   void dispose() {
     _telemetrySubscription?.cancel();
@@ -166,6 +191,8 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                                   style: const TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Courier', fontWeight: FontWeight.bold)),
                                 Text('Tilt: ${frame.tilt.toStringAsFixed(1)}°', 
                                   style: const TextStyle(color: Colors.greenAccent, fontSize: 14, fontFamily: 'Courier')),
+                                const SizedBox(height: 4), // Added spacer
+                                _buildGpsStatus(frame.position?.accuracy), // Added indicator
                               ],
                             ),
                           );
