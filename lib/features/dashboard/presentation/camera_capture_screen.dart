@@ -2,11 +2,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'package:geolocator/geolocator.dart';
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/services/telemetry_service.dart';
 import '../../../utils/geo_utils.dart';
-import '../data/models/capture_model.dart'; // Ensure this points to your PhotoEntry file
+import '../data/models/capture_model.dart'; 
 
 class CameraCaptureScreen extends StatefulWidget {
   const CameraCaptureScreen({Key? key}) : super(key: key);
@@ -22,7 +21,6 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
   final TelemetryService _telemetryService = TelemetryService();
   StreamSubscription<TelemetryFrame>? _telemetrySubscription;
   
-  // Cache the latest raw data for the moment of capture
   RawTelemetry? _lastRawTelemetry;
   
   final ValueNotifier<TelemetryFrame> _telemetryNotifier = ValueNotifier(
@@ -71,7 +69,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
   void _initializeTelemetry() {
     _telemetrySubscription = _telemetryService.startTelemetryStream().listen((frame) {
       _telemetryNotifier.value = frame;
-      _lastRawTelemetry = frame.rawTelemetry; // Cache raw sensors
+      _lastRawTelemetry = frame.rawTelemetry; 
     });
   }
 
@@ -86,35 +84,22 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
 
   Future<void> _takePicture() async {
     if (_controller == null || !_controller!.value.isInitialized) return;
+    
     try {
       final XFile photoFile = await _controller!.takePicture();
 
-      // Attempt to get location (wrapped in try-catch in case of disabled GPS)
-      Position? position;
-      try {
-        const LocationSettings locationSettings =  LocationSettings(
-          accuracy: LocationAccuracy.high, 
-          distanceFilter: 0, 
-        );
-
-        position = await Geolocator.getCurrentPosition(
-          locationSettings: locationSettings,
-        );
-      } catch (e) {
-        debugPrint("Could not get location: $e");
-      }
-      
-      // Construct the metadata-rich object
       final frame = _telemetryNotifier.value;
+      final pos = frame.position; 
+      
       final entry = PhotoEntry(
         imagePath: photoFile.path,
         heading: frame.heading,
         tiltY: frame.tilt,
         rawSensors: _lastRawTelemetry,
-        gpsCoordinates: position != null 
-          ? "${position.latitude},${position.longitude}" 
+        gpsCoordinates: pos != null 
+          ? "${pos.latitude},${pos.longitude}" 
           : null,
-        gpsAccuracy: position?.accuracy,
+        gpsAccuracy: pos?.accuracy, 
         timestamp: DateTime.now(),
       );
       
