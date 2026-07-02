@@ -68,4 +68,7 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get cardinalDirections =>
       'N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSO,SO,OSO,O,ONO,NO,NNO';
+
+  @override
+  String get tilt => 'Inclinación';
 }

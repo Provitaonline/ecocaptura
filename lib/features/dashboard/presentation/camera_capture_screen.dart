@@ -75,7 +75,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
 
   Widget _buildGpsStatus(double? accuracy) {
     if (accuracy == null) {
-      return const Icon(Icons.gps_off, color: Colors.grey, size: 14);
+      return const Icon(Icons.gps_off, color: Colors.grey, size: 16);
     }
 
     Color statusColor;
@@ -86,15 +86,45 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
     } else {
       statusColor = Colors.redAccent;
     }
+    
+    // Just the icon, no text!
+    return Icon(Icons.gps_fixed, color: statusColor, size: 16);
+  }
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(Icons.gps_fixed, color: statusColor, size: 14),
-        const SizedBox(width: 4),
-        Text('${accuracy.toInt()}m', 
-            style: TextStyle(color: statusColor, fontSize: 12, fontFamily: 'Courier')),
-      ],
+  Widget _buildBubbleLevel(double tilt) {
+    // Clamp to keep it inside the container bounds
+    final double normalizedTilt = tilt.clamp(-30.0, 30.0);
+    // Map tilt to a Y-axis movement (scale factor 1.0)
+    final double verticalOffset = normalizedTilt * 1.0;
+
+    return Container(
+      width: 24,
+      height: 80,
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.6),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white24, width: 1),
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Center reference mark
+          const Divider(color: Colors.white, thickness: 1, indent: 4, endIndent: 4),
+          // The Moving Bubble
+          Positioned(
+            top: 35 + verticalOffset, // 35 centers the 10x10 bubble
+            child: Container(
+              width: 10,
+              height: 10,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.greenAccent,
+                boxShadow: [BoxShadow(color: Colors.black, blurRadius: 2)],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -170,33 +200,46 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                     alignment: Alignment.topRight,
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: ValueListenableBuilder<TelemetryFrame>(
-                        valueListenable: _telemetryNotifier,
-                        builder: (context, frame, child) {
-                          final locs = AppLocalizations.of(context);
-                          final List<String> dirs = locs?.cardinalDirections.split(',') ?? [];
-                          final String cardinal = frame.heading.toCardinalDirection(dirs);
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          // 1. Heading (Now just the Cardinal Direction)
+                          ValueListenableBuilder<TelemetryFrame>(
+                            valueListenable: _telemetryNotifier,
+                            builder: (context, frame, child) {
+                              final locs = AppLocalizations.of(context);
+                              final List<String> dirs = locs?.cardinalDirections.split(',') ?? [];
+                              final String cardinal = frame.heading.toCardinalDirection(dirs);
 
-                          return Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.6),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text('${frame.heading.toStringAsFixed(1)}° $cardinal', 
-                                  style: const TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Courier', fontWeight: FontWeight.bold)),
-                                Text('Tilt: ${frame.tilt.toStringAsFixed(1)}°', 
-                                  style: const TextStyle(color: Colors.greenAccent, fontSize: 14, fontFamily: 'Courier')),
-                                const SizedBox(height: 4), // Added spacer
-                                _buildGpsStatus(frame.position?.accuracy), // Added indicator
-                              ],
-                            ),
-                          );
-                        },
+                              return Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withValues(alpha: 0.6),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(cardinal, 
+                                  style: const TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'Courier', fontWeight: FontWeight.bold)),
+                              );
+                            },
+                          ),
+                          
+                          const SizedBox(height: 12),
+                          
+                          // 2. Standalone GPS Status Icon
+                          ValueListenableBuilder<TelemetryFrame>(
+                            valueListenable: _telemetryNotifier,
+                            builder: (context, frame, child) => _buildGpsStatus(frame.position?.accuracy),
+                          ),
+                          
+                          const SizedBox(height: 12),
+                          
+                          // 3. Standalone Bubble Level
+                          ValueListenableBuilder<TelemetryFrame>(
+                            valueListenable: _telemetryNotifier,
+                            builder: (context, frame, child) => _buildBubbleLevel(frame.tilt),
+                          ),
+                        ],
                       ),
                     ),
                   ),
