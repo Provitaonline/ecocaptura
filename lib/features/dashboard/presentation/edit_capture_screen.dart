@@ -132,7 +132,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
     );
   }
 
-  // --- Helper Methods (Same as your original code) ---
+  // --- Helper Methods ---
   Widget _buildPhotoThumbnail(PhotoEntry photo, int index) {
     return Container(
       width: 85,
@@ -153,7 +153,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                     borderRadius: BorderRadius.circular(8),
                     child: Image.file(
                       File(photo.imagePath!),
-                      fit: BoxFit.cover, // This correctly handles the square crop
+                      fit: BoxFit.cover, 
                       width: 85,
                       height: 85,
                     ),
@@ -175,7 +175,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                 ),
                 child: Icon(
                   Icons.cancel, 
-                  color: Colors.grey.shade600, // Non-red neutral color
+                  color: Colors.grey.shade600, 
                   size: 20,
                 ),
               ),

@@ -108,12 +108,11 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Stack(
-        alignment: Alignment.center, // This is key for horizontal centering
+        alignment: Alignment.center,
         children: [
           const Divider(color: Colors.white24, thickness: 1, indent: 4, endIndent: 4),
           Positioned(
             top: 35 + verticalOffset,
-            // Remove 'left' or 'right' constraints, let Alignment.center handle it
             child: Container(
               width: 8,
               height: 8,
