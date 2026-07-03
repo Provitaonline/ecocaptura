@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import '../../../core/constants/app_spacing.dart';
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/services/telemetry_service.dart';
 import '../../../utils/geo_utils.dart';
@@ -177,67 +178,80 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
             builder: (context, orientation) {
               final isLandscape = orientation == Orientation.landscape;
 
-              return Stack(
-                children: [
-                  // 1. Full-Screen Viewfinder with Pinch Zoom
-                  Positioned.fill(
-                    child: GestureDetector(
-                      onScaleStart: (details) => _baseZoomLevel = _currentZoomLevel,
-                      onScaleUpdate: (details) async {
-                        if (_controller == null) return;
-                        final minZoom = await _controller!.getMinZoomLevel();
-                        final maxZoom = await _controller!.getMaxZoomLevel();
-                        double newZoom = (_baseZoomLevel * details.scale).clamp(minZoom, maxZoom);
-                        if ((newZoom - _currentZoomLevel).abs() > 0.05) {
-                          _currentZoomLevel = newZoom;
-                          await _controller!.setZoomLevel(newZoom);
-                        }
-                      },
-                      child: AspectRatio(
-                        aspectRatio: _controller!.value.aspectRatio,
-                        child: CameraPreview(_controller!),
-                      ),
-                    ),
-                  ),
+              return LayoutBuilder(
+                builder: (context, constraints) {
+                  final size = MediaQuery.of(context).size;
+                  
+                  // Compute dynamic dimensions based on screen metrics
+                  final double controlBarSize = isLandscape 
+                      ? (size.width * 0.15).clamp(80.0, 160.0)
+                      : (size.height * 0.12).clamp(80.0, 160.0);
 
-                  // 2. The HUD (Top-Right, Adaptive Padding)
-                  SafeArea(
-                    child: Align(
-                      alignment: Alignment.topRight,
-                      child: Padding(
-                        // Push HUD left in landscape to clear the 120px shutter bar
-                        padding: EdgeInsets.only(
-                          top: 16.0,
-                          right: isLandscape ? 136.0 : 16.0,
-                          bottom: 16.0,
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            _buildTelemetryHeading(),
-                            const SizedBox(height: 12),
-                            _buildGpsStatusWidget(),
-                            const SizedBox(height: 12),
-                            _buildBubbleLevelWidget(),
-                          ],
+                  final double shutterButtonSize = (controlBarSize * 0.6).clamp(56.0, 96.0);
+
+                  return Stack(
+                    children: [
+                      // 1. Full-Screen Viewfinder with Pinch Zoom
+                      Positioned.fill(
+                        child: GestureDetector(
+                          onScaleStart: (details) => _baseZoomLevel = _currentZoomLevel,
+                          onScaleUpdate: (details) async {
+                            if (_controller == null) return;
+                            final minZoom = await _controller!.getMinZoomLevel();
+                            final maxZoom = await _controller!.getMaxZoomLevel();
+                            double newZoom = (_baseZoomLevel * details.scale).clamp(minZoom, maxZoom);
+                            if ((newZoom - _currentZoomLevel).abs() > 0.05) {
+                              _currentZoomLevel = newZoom;
+                              await _controller!.setZoomLevel(newZoom);
+                            }
+                          },
+                          child: AspectRatio(
+                            aspectRatio: _controller!.value.aspectRatio,
+                            child: CameraPreview(_controller!),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
 
-                  // 3. The "Sticky" Control Bar
-                  Align(
-                    alignment: isLandscape ? Alignment.centerRight : Alignment.bottomCenter,
-                    child: Container(
-                      width: isLandscape ? 120 : double.infinity,
-                      height: isLandscape ? double.infinity : 120,
-                      color: Colors.black,
-                      alignment: Alignment.center,
-                      child: _buildShutterButton(),
-                    ),
-                  ),
-                ],
+                      // 2. The HUD (Top-Right, Adaptive Padding)
+                      SafeArea(
+                        child: Align(
+                          alignment: Alignment.topRight,
+                          child: Padding(
+                            // Push HUD left in landscape to clear the shutter bar dynamically
+                            padding: EdgeInsets.only(
+                              top: AppSpacing.lg,
+                              right: isLandscape ? (controlBarSize + AppSpacing.lg) : AppSpacing.lg,
+                              bottom: AppSpacing.lg,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                _buildTelemetryHeading(),
+                                const SizedBox(height: AppSpacing.md),
+                                _buildGpsStatusWidget(),
+                                const SizedBox(height: AppSpacing.md),
+                                _buildBubbleLevelWidget(),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // 3. The "Sticky" Control Bar
+                      Align(
+                        alignment: isLandscape ? Alignment.centerRight : Alignment.bottomCenter,
+                        child: Container(
+                          width: isLandscape ? controlBarSize : double.infinity,
+                          height: isLandscape ? double.infinity : controlBarSize,
+                          color: Colors.black,
+                          alignment: Alignment.center,
+                          child: _buildShutterButton(shutterButtonSize),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               );
             },
           );
@@ -247,7 +261,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
   }
 
   // --- Shutter Button Helper ---
-  Widget _buildShutterButton() {
+  Widget _buildShutterButton(double size) {
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) {
@@ -260,8 +274,8 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
         duration: const Duration(milliseconds: 100),
         curve: Curves.easeOut,
         child: Container(
-          width: 68,
-          height: 68,
+          width: size,
+          height: size,
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.8),
             shape: BoxShape.circle,
