@@ -30,6 +30,8 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
   double _currentZoomLevel = 1.0;
   double _baseZoomLevel = 1.0;
 
+  bool _isPressed = false;
+
   @override
   void initState() {
     super.initState();
@@ -92,34 +94,30 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
   }
 
   Widget _buildBubbleLevel(double tilt) {
-    // Clamp to keep it inside the container bounds
     final double normalizedTilt = tilt.clamp(-30.0, 30.0);
-    // Map tilt to a Y-axis movement (scale factor 1.0)
     final double verticalOffset = normalizedTilt * 1.0;
+    final bool isLevel = tilt.abs() < 1.0;
 
     return Container(
-      width: 24,
+      width: 20,
       height: 80,
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white24, width: 1),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Stack(
-        alignment: Alignment.center,
+        alignment: Alignment.center, // This is key for horizontal centering
         children: [
-          // Center reference mark
-          const Divider(color: Colors.white, thickness: 1, indent: 4, endIndent: 4),
-          // The Moving Bubble
+          const Divider(color: Colors.white24, thickness: 1, indent: 4, endIndent: 4),
           Positioned(
-            top: 35 + verticalOffset, // 35 centers the 10x10 bubble
+            top: 35 + verticalOffset,
+            // Remove 'left' or 'right' constraints, let Alignment.center handle it
             child: Container(
-              width: 10,
-              height: 10,
-              decoration: const BoxDecoration(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.greenAccent,
-                boxShadow: [BoxShadow(color: Colors.black, blurRadius: 2)],
+                color: isLevel ? Colors.white : Colors.greenAccent,
               ),
             ),
           ),
@@ -226,15 +224,20 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                           
                           const SizedBox(height: 12),
                           
-                          // 2. Standalone GPS Status Icon
+                          // The GPS Status block (aligned to the 10px center-line of the 20px bubble level)
                           ValueListenableBuilder<TelemetryFrame>(
                             valueListenable: _telemetryNotifier,
-                            builder: (context, frame, child) => _buildGpsStatus(frame.position?.accuracy),
+                            builder: (context, frame, child) => SizedBox(
+                              width: 20, 
+                              child: Center(
+                                child: _buildGpsStatus(frame.position?.accuracy),
+                              ),
+                            ),
                           ),
-                          
+
                           const SizedBox(height: 12),
-                          
-                          // 3. Standalone Bubble Level
+
+                          // The Bubble Level block (also 20px width)
                           ValueListenableBuilder<TelemetryFrame>(
                             valueListenable: _telemetryNotifier,
                             builder: (context, frame, child) => _buildBubbleLevel(frame.tilt),
@@ -248,11 +251,39 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Padding(
-                    padding: const EdgeInsets.only(bottom: 24.0),
-                    child: FloatingActionButton(
-                      backgroundColor: Colors.white,
-                      onPressed: _takePicture,
-                      child: const Icon(Icons.camera_alt, color: Colors.black, size: 28),
+                    padding: const EdgeInsets.only(bottom: 32.0),
+                    child: GestureDetector(
+                      onTapDown: (_) => setState(() => _isPressed = true),
+                      onTapUp: (_) {
+                        setState(() => _isPressed = false);
+                        _takePicture();
+                      },
+                      onTapCancel: () => setState(() => _isPressed = false),
+                      child: AnimatedScale(
+                        scale: _isPressed ? 0.9 : 1.0,
+                        duration: const Duration(milliseconds: 100),
+                        curve: Curves.easeOut,
+                        child: Container(
+                          width: 68,
+                          height: 68,
+                          decoration: BoxDecoration(
+                            // Reduce opacity so it isn't "blinding"
+                            color: Colors.white.withValues(alpha: 0.8), 
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              // Make the ring thicker and more opaque so it's visible
+                              color: Colors.white.withValues(alpha: 0.9), 
+                              width: 3, 
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.3),
+                                blurRadius: 6,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
