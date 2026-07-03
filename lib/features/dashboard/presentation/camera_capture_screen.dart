@@ -1,4 +1,5 @@
 // lib/camera_capture_screen.dart
+import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
@@ -182,16 +183,16 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                 builder: (context, constraints) {
                   final size = MediaQuery.of(context).size;
                   
-                  // Compute dynamic dimensions based on screen metrics
+                  // Keep dimensions responsive and consistent
                   final double controlBarSize = isLandscape 
                       ? (size.width * 0.15).clamp(80.0, 160.0)
                       : (size.height * 0.12).clamp(80.0, 160.0);
-
-                  final double shutterButtonSize = (controlBarSize * 0.6).clamp(56.0, 96.0);
+                  final double buttonSize = (controlBarSize * 0.6).clamp(56.0, 96.0);
+                  final double iconSize = buttonSize * 0.5;
 
                   return Stack(
                     children: [
-                      // 1. Full-Screen Viewfinder with Pinch Zoom
+                      // 1. Full-Screen Viewfinder
                       Positioned.fill(
                         child: GestureDetector(
                           onScaleStart: (details) => _baseZoomLevel = _currentZoomLevel,
@@ -212,12 +213,34 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                         ),
                       ),
 
-                      // 2. The HUD (Top-Right, Adaptive Padding)
+                      // 2. NEW: Top-Left Exit Button (Symmetrical to Shutter)
+                      if (Platform.isIOS)
+                        SafeArea(
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.all(AppSpacing.lg),
+                              child: GestureDetector(
+                                onTap: () => Navigator.of(context).pop(),
+                                child: Container(
+                                  width: buttonSize * 0.7, // Slightly smaller than shutter
+                                  height: buttonSize * 0.7,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withValues(alpha: 0.4),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(Icons.close, color: Colors.white, size: iconSize * 0.7),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                      // 3. The HUD (Top-Right, Adaptive Padding)
                       SafeArea(
                         child: Align(
                           alignment: Alignment.topRight,
                           child: Padding(
-                            // Push HUD left in landscape to clear the shutter bar dynamically
                             padding: EdgeInsets.only(
                               top: AppSpacing.lg,
                               right: isLandscape ? (controlBarSize + AppSpacing.lg) : AppSpacing.lg,
@@ -238,7 +261,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                         ),
                       ),
 
-                      // 3. The "Sticky" Control Bar
+                      // 4. The "Sticky" Control Bar
                       Align(
                         alignment: isLandscape ? Alignment.centerRight : Alignment.bottomCenter,
                         child: Container(
@@ -246,7 +269,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                           height: isLandscape ? double.infinity : controlBarSize,
                           color: Colors.black,
                           alignment: Alignment.center,
-                          child: _buildShutterButton(shutterButtonSize),
+                          child: _buildShutterButton(buttonSize),
                         ),
                       ),
                     ],
