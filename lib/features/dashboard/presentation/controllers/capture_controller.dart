@@ -41,4 +41,21 @@ class CaptureController extends ChangeNotifier {
       await loadCaptures();
     }
   }
+
+  // Updates an existing capture by overwriting the file and the index.
+  Future<void> updateCapture(CaptureModel model) async {
+    try {
+      // 1. Persist the updated model to disk (StorageManager should handle file write)
+      await _storage.saveCapture(model);
+
+      // 2. Update the index record
+      await _storage.addOrUpdateIndex(model);
+
+      // 3. Refresh state to propagate changes to the UI
+      await loadCaptures();
+    } catch (e) {
+      debugPrint("Error updating capture: $e");
+      rethrow; 
+    }
+  }
 }

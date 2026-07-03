@@ -48,6 +48,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get newCapture => 'Nueva Captura';
 
   @override
+  String get editCapture => 'Editar Captura';
+
+  @override
   String get photos => 'Fotos';
 
   @override
@@ -61,6 +64,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get saveCapture => 'Guardar captura';
+
+  @override
+  String get saveChanges => 'Guardar cambios';
 
   @override
   String get abortCapture => 'Abandonar captura';

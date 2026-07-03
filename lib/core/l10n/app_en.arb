@@ -13,11 +13,13 @@
   "noCaptures": "No captures yet.",
   "unnamedCapture": "Unnamed Capture",
   "newCapture": "New Capture",
+  "editCapture": "Edit Capture",
   "photos": "Photos",
   "captureDetails": "Capture Details",
   "description": "Description",
   "descriptionHint": "Enter capture description",
   "saveCapture": "Save capture",
+  "saveChanges": "Save changes",
   "abortCapture": "Abort capture",
   "cardinalDirections": "N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW",
   "tilt": "Tilt"

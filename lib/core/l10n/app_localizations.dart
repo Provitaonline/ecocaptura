@@ -176,6 +176,12 @@ abstract class AppLocalizations {
   /// **'New Capture'**
   String get newCapture;
 
+  /// No description provided for @editCapture.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Capture'**
+  String get editCapture;
+
   /// No description provided for @photos.
   ///
   /// In en, this message translates to:
@@ -205,6 +211,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save capture'**
   String get saveCapture;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get saveChanges;
 
   /// No description provided for @abortCapture.
   ///

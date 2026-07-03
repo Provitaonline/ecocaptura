@@ -48,13 +48,38 @@ class CaptureModel {
   String? description;
   List<PhotoEntry> photos;
 
-  // Custom converter for the enum
   @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)
   CaptureStatus status;
   
   DateTime? timestamp;
 
-  CaptureModel({this.id, this.remoteId, this.description, required this.photos, required this.status, this.timestamp});
+  CaptureModel({
+    this.id, 
+    this.remoteId, 
+    this.description, 
+    required this.photos, 
+    required this.status, 
+    this.timestamp
+  });
+
+  // ADD THIS METHOD
+  CaptureModel copyWith({
+    int? id,
+    String? remoteId,
+    String? description,
+    List<PhotoEntry>? photos,
+    CaptureStatus? status,
+    DateTime? timestamp,
+  }) {
+    return CaptureModel(
+      id: id ?? this.id,
+      remoteId: remoteId ?? this.remoteId,
+      description: description ?? this.description,
+      photos: photos ?? this.photos,
+      status: status ?? this.status,
+      timestamp: timestamp ?? this.timestamp,
+    );
+  }
 
   factory CaptureModel.fromJson(Map<String, dynamic> json) => _$CaptureModelFromJson(json);
   Map<String, dynamic> toJson() => _$CaptureModelToJson(this);
