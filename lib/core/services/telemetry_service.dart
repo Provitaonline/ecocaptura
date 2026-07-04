@@ -77,7 +77,9 @@ class TelemetryService {
 
   Stream<TelemetryFrame> startTelemetryStream() {
     RotationSensor.samplingPeriod = SensorInterval.uiInterval;
+    RotationSensor.referenceFrame = ReferenceFrame.trueNorth;
     RotationSensor.coordinateSystem = CoordinateSystem.transformed(Axis3.X, -Axis3.Z);
+    
     _lastFrameTime = DateTime.fromMillisecondsSinceEpoch(0);
 
     return RotationSensor.orientationStream
