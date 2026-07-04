@@ -36,6 +36,7 @@ PhotoEntry _$PhotoEntryFromJson(Map<String, dynamic> json) => PhotoEntry(
       : RawTelemetry.fromJson(json['rawSensors'] as Map<String, dynamic>),
   gpsCoordinates: json['gpsCoordinates'] as String?,
   gpsAccuracy: (json['gpsAccuracy'] as num?)?.toDouble(),
+  gpsAltitude: (json['gpsAltitude'] as num?)?.toDouble(),
   timestamp: json['timestamp'] == null
       ? null
       : DateTime.parse(json['timestamp'] as String),
@@ -51,6 +52,7 @@ Map<String, dynamic> _$PhotoEntryToJson(PhotoEntry instance) =>
       'rawSensors': instance.rawSensors?.toJson(),
       'gpsCoordinates': instance.gpsCoordinates,
       'gpsAccuracy': instance.gpsAccuracy,
+      'gpsAltitude': instance.gpsAltitude,
       'timestamp': instance.timestamp?.toIso8601String(),
     };
 
@@ -61,6 +63,8 @@ CaptureModel _$CaptureModelFromJson(Map<String, dynamic> json) => CaptureModel(
   photos: (json['photos'] as List<dynamic>)
       .map((e) => PhotoEntry.fromJson(e as Map<String, dynamic>))
       .toList(),
+  qualityScore: (json['qualityScore'] as num?)?.toInt() ?? 3,
+  qualityReason: json['qualityReason'] as String?,
   status: _statusFromJson((json['status'] as num).toInt()),
   timestamp: json['timestamp'] == null
       ? null
@@ -73,6 +77,8 @@ Map<String, dynamic> _$CaptureModelToJson(CaptureModel instance) =>
       'remoteId': instance.remoteId,
       'description': instance.description,
       'photos': instance.photos.map((e) => e.toJson()).toList(),
+      'qualityScore': instance.qualityScore,
+      'qualityReason': instance.qualityReason,
       'status': _statusToJson(instance.status),
       'timestamp': instance.timestamp?.toIso8601String(),
     };

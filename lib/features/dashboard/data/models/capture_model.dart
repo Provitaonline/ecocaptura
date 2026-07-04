@@ -49,6 +49,9 @@ class CaptureModel {
   String? description;
   List<PhotoEntry> photos;
 
+  int? qualityScore; 
+  String? qualityReason;
+
   @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)
   CaptureStatus status;
   
@@ -58,12 +61,13 @@ class CaptureModel {
     this.id, 
     this.remoteId, 
     this.description, 
-    required this.photos, 
+    required this.photos,
+    this.qualityScore = 3, // Default
+    this.qualityReason,
     required this.status, 
     this.timestamp
   });
 
-  // ADD THIS METHOD
   CaptureModel copyWith({
     int? id,
     String? remoteId,
@@ -77,6 +81,8 @@ class CaptureModel {
       remoteId: remoteId ?? this.remoteId,
       description: description ?? this.description,
       photos: photos ?? this.photos,
+      qualityScore: qualityScore ?? this.qualityScore,
+      qualityReason: qualityReason ?? this.qualityReason,
       status: status ?? this.status,
       timestamp: timestamp ?? this.timestamp,
     );
