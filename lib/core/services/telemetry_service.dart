@@ -1,6 +1,7 @@
 // lib/core/services/telemetry_service.dart
 import 'dart:async';
 import 'dart:math' as math;
+import 'package:flutter/foundation.dart';
 import 'package:flutter_rotation_sensor/flutter_rotation_sensor.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:sensors_plus/sensors_plus.dart' hide SensorInterval;
@@ -13,8 +14,8 @@ class TelemetryFrame {
   final Position? position;
 
   TelemetryFrame({
-    required this.heading, 
-    required this.tilt, 
+    required this.heading,
+    required this.tilt,
     this.rawTelemetry,
     this.position,
   });
@@ -30,20 +31,19 @@ class TelemetryService {
   StreamSubscription? _accelSub;
   StreamSubscription? _gyroSub;
   StreamSubscription<Position>? _locationSub;
+  bool _isInitialized = false;
 
-  Future<void> _checkPermissions() async {
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-    if (permission == LocationPermission.deniedForever) {
-      return; // Handle this case by showing a dialog
-    }
-  }
+  TelemetryService();
 
-  TelemetryService() {
-    _checkPermissions();
-    
+  /// Must be called before starting the stream to ensure permissions are granted.
+  Future<void> init() async {
+    if (_isInitialized) return;
+
+    final hasPermission = await _checkPermissions();
+    if (!hasPermission) {
+      debugPrint("TelemetryService: Location permissions denied. Skipping location stream.");
+    }
+
     _accelSub = accelerometerEventStream().listen((e) {
       _accX = e.x; _accY = e.y; _accZ = e.z;
     });
@@ -52,15 +52,27 @@ class TelemetryService {
       _gyroX = e.x; _gyroY = e.y; _gyroZ = e.z;
     });
 
-    // Start location caching
-    _locationSub = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.best,
-        distanceFilter: 5, 
-      ),
-    ).listen((position) {
-      _lastPosition = position;
-    });
+    if (hasPermission) {
+      _locationSub = Geolocator.getPositionStream(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.best,
+          distanceFilter: 5,
+        ),
+      ).listen((position) {
+        _lastPosition = position;
+      });
+    }
+    
+    _isInitialized = true;
+  }
+
+  Future<bool> _checkPermissions() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    return permission == LocationPermission.whileInUse || 
+           permission == LocationPermission.always;
   }
 
   Stream<TelemetryFrame> startTelemetryStream() {
@@ -73,9 +85,9 @@ class TelemetryService {
           final now = DateTime.now();
           if (now.difference(_lastFrameTime).inMilliseconds >= 150) {
             _lastFrameTime = now;
-            return true; 
+            return true;
           }
-          return false; 
+          return false;
         })
         .map((event) {
           final euler = event.eulerAngles;
@@ -90,7 +102,7 @@ class TelemetryService {
               accX: _accX, accY: _accY, accZ: _accZ,
               gyroX: _gyroX, gyroY: _gyroY, gyroZ: _gyroZ,
             ),
-            position: _lastPosition, 
+            position: _lastPosition,
           );
         });
   }
@@ -99,6 +111,7 @@ class TelemetryService {
     _accelSub?.cancel();
     _gyroSub?.cancel();
     _locationSub?.cancel();
+    _isInitialized = false;
     _lastFrameTime = DateTime.fromMillisecondsSinceEpoch(0);
   }
 }

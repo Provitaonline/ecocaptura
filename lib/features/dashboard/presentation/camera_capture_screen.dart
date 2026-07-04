@@ -21,6 +21,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
   Future<void>? _initializeControllerFuture;
   
   final TelemetryService _telemetryService = TelemetryService();
+  
   StreamSubscription<TelemetryFrame>? _telemetrySubscription;
   
   RawTelemetry? _lastRawTelemetry;
@@ -57,24 +58,38 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
         imageFormatGroup: ImageFormatGroup.yuv420,
       );
 
+      // 1. Assign the future BEFORE awaiting it
+      final initFuture = _controller!.initialize();
       setState(() {
-        _initializeControllerFuture = _controller!.initialize();
+        _initializeControllerFuture = initFuture;
       });
 
-      await _initializeControllerFuture;
+      // 2. Await the same future you assigned to the state
+      await initFuture;
+      
       if (!mounted) return;
       
+      // 3. Trigger telemetry separately
       _initializeTelemetry();
+      
     } catch (e) {
-      debugPrint('Camera init error: $e');
+      debugPrint('Camera/Telemetry init error: $e');
     }
   }
 
-  void _initializeTelemetry() {
-    _telemetrySubscription = _telemetryService.startTelemetryStream().listen((frame) {
-      _telemetryNotifier.value = frame;
-      _lastRawTelemetry = frame.rawTelemetry; 
-    });
+  Future<void> _initializeTelemetry() async {
+    try {
+      await _telemetryService.init();
+
+      _telemetrySubscription = _telemetryService.startTelemetryStream().listen((frame) {
+        if (mounted) {
+          _telemetryNotifier.value = frame;
+          _lastRawTelemetry = frame.rawTelemetry; 
+        }
+      });
+    } catch (e) {
+      debugPrint("Telemetry initialization failed: $e");
+    }
   }
 
   Widget _buildGpsStatus(double? accuracy) {

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../controllers/capture_controller.dart';
+import '../../data/services/storage_manager.dart';
+import '../edit_capture_screen.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import './capture_detail_screen.dart'; 
 
 class CaptureList extends StatelessWidget {
   final CaptureController controller;
@@ -59,12 +60,22 @@ class CaptureList extends StatelessWidget {
                   title: Text(item['description'] ?? i18n.unnamedCapture),
                   subtitle: Text(item['timestamp'] ?? ''),
                   leading: const Icon(Icons.photo_library),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => CaptureDetailScreen(capture: item),
-                      ),
-                    );
+                  // Inside your list item's onTap
+                  onTap: () async {
+                    final int id = item['id'];
+                    final fullCapture = await StorageManager().loadCapture(id);
+                    
+                    if (fullCapture != null && context.mounted) {
+                      // 3. Open the editor with the full, detailed model
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => CaptureEditorScreen(
+                            controller: controller,
+                            existingCapture: fullCapture,
+                          ),
+                        ),
+                      );
+                    }
                   },
                 ),
               ),
