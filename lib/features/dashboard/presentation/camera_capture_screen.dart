@@ -155,20 +155,23 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
     if (_controller == null || !_controller!.value.isInitialized) return;
     
     try {
+      // 1. Capture the telemetry BEFORE the async operation begins
+      final currentFrame = _telemetryNotifier.value;
+      
+      // 2. Now perform the I/O operation
       final XFile photoFile = await _controller!.takePicture();
 
-      final frame = _telemetryNotifier.value;
-      final pos = frame.position; 
-      
+      // 3. Use the captured data
       final entry = PhotoEntry(
         imagePath: photoFile.path,
-        heading: frame.heading,
-        tiltY: frame.tilt,
+        heading: currentFrame.heading,
+        tiltY: currentFrame.tilt,
         rawSensors: _lastRawTelemetry,
-        gpsCoordinates: pos != null 
-          ? "${pos.latitude},${pos.longitude}" 
+        gpsCoordinates: currentFrame.position != null 
+          ? "${currentFrame.position!.latitude},${currentFrame.position!.longitude}" 
           : null,
-        gpsAccuracy: pos?.accuracy, 
+        gpsAccuracy: currentFrame.position?.accuracy,
+        gpsAltitude: currentFrame.position?.altitude,
         timestamp: DateTime.now(),
       );
       
