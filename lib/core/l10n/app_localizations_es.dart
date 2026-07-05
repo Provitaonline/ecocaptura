@@ -72,6 +72,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get abortCapture => 'Abandonar captura';
 
   @override
+  String get dataQuality => 'Calificar calidad del dato';
+
+  @override
+  String get qualityReason => 'Seleccionar razón';
+
+  @override
   String get cardinalDirections =>
       'N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSO,SO,OSO,O,ONO,NO,NNO';
 

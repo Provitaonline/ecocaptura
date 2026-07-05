@@ -21,6 +21,8 @@
   "saveCapture": "Guardar captura",
   "saveChanges": "Guardar cambios",
   "abortCapture": "Abandonar captura",
+  "dataQuality": "Calificar calidad del dato",
+  "qualityReason": "Seleccionar razón",
   "cardinalDirections": "N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSO,SO,OSO,O,ONO,NO,NNO",
   "tilt": "Inclinación"
 }

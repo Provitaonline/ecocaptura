@@ -22,6 +22,8 @@ class CaptureEditorScreen extends StatefulWidget {
 class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
   late TextEditingController _descController;
   late List<PhotoEntry> _photoEntries;
+  late int _selectedQuality;
+  late String? _selectedReason;
   
   bool get isEditing => widget.existingCapture != null;
 
@@ -30,6 +32,8 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
     super.initState();
     _descController = TextEditingController(text: widget.existingCapture?.description ?? '');
     _photoEntries = List.from(widget.existingCapture?.photos ?? []);
+    _selectedQuality = widget.existingCapture?.qualityScore ?? 3;
+    _selectedReason = widget.existingCapture?.qualityReason;
   }
 
   @override
@@ -43,6 +47,8 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
       final updatedCapture = widget.existingCapture!.copyWith(
         description: _descController.text,
         photos: _photoEntries,
+        qualityScore: _selectedQuality,
+        qualityReason: _selectedReason,
       );
       widget.controller.updateCapture(updatedCapture);
     } else {
@@ -98,6 +104,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                       const SizedBox(height: 28),
                       Text(i18n.captureDetails, style: Theme.of(context).textTheme.titleMedium),
                       const SizedBox(height: 10),
+                      _buildQualityFields(i18n),
                       TextField(
                         controller: _descController,
                         textInputAction: TextInputAction.done,
@@ -204,6 +211,54 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
         decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: BorderRadius.circular(8)),
         child: const Icon(Icons.camera_alt),
       ),
+    );
+  }
+
+  Widget _buildQualityFields(AppLocalizations i18n) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Quality Rating
+        DropdownButtonFormField<int>(
+          initialValue: _selectedQuality, // Initialize this in initState from model
+          decoration: InputDecoration(
+            labelText: i18n.dataQuality,
+            border: const OutlineInputBorder(),
+          ),
+          items: [1, 2, 3].map((int val) {
+            return DropdownMenuItem<int>(
+              value: val,
+              child: Text("$val Star"),
+            );
+          }).toList(),
+          onChanged: (val) {
+            setState(() {
+              _selectedQuality = val!;
+              if (_selectedQuality == 3) {
+                _selectedReason = null;
+              }
+            });
+          },
+        ),
+        const SizedBox(height: 16),
+        // Reason (Visible if quality < 3)
+        if (_selectedQuality < 3)
+          DropdownButtonFormField<String>(
+            initialValue: _selectedReason,
+            decoration: InputDecoration(
+              labelText: i18n.qualityReason,
+              border: const OutlineInputBorder(),
+            ),
+            items: ["Poor GPS", "Blurry", "Obstructed", "Other"].map((String reason) {
+              return DropdownMenuItem<String>(
+                value: reason,
+                child: Text(reason),
+              );
+            }).toList(),
+            onChanged: (val) => setState(() => _selectedReason = val),
+          ),
+        const SizedBox(height: 28), // Spacer before description
+      ],
     );
   }
 }

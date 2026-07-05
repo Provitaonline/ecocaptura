@@ -224,6 +224,18 @@ abstract class AppLocalizations {
   /// **'Abort capture'**
   String get abortCapture;
 
+  /// No description provided for @dataQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate data quality'**
+  String get dataQuality;
+
+  /// No description provided for @qualityReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a reason'**
+  String get qualityReason;
+
   /// No description provided for @cardinalDirections.
   ///
   /// In en, this message translates to:

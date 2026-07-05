@@ -74,6 +74,8 @@ class CaptureModel {
     String? description,
     List<PhotoEntry>? photos,
     CaptureStatus? status,
+    int? qualityScore,
+    String? qualityReason,
     DateTime? timestamp,
   }) {
     return CaptureModel(
