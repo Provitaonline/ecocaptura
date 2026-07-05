@@ -84,7 +84,7 @@ class CaptureModel {
       description: description ?? this.description,
       photos: photos ?? this.photos,
       qualityScore: qualityScore ?? this.qualityScore,
-      qualityReason: qualityReason ?? this.qualityReason,
+      qualityReason: (qualityReason == "") ? null : (qualityReason ?? this.qualityReason),
       status: status ?? this.status,
       timestamp: timestamp ?? this.timestamp,
     );

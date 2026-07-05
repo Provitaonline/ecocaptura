@@ -235,7 +235,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
             setState(() {
               _selectedQuality = val!;
               if (_selectedQuality == 3) {
-                _selectedReason = null;
+                _selectedReason = "";
               }
             });
           },
