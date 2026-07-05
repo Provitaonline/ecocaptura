@@ -83,4 +83,16 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get tilt => 'Inclinación';
+
+  @override
+  String get deletePhotoTitle => 'Borrar Photo';
+
+  @override
+  String get deletePhotoMessage => 'Seguro?';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get delete => 'Borrar';
 }

@@ -247,6 +247,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tilt'**
   String get tilt;
+
+  /// No description provided for @deletePhotoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Photo'**
+  String get deletePhotoTitle;
+
+  /// No description provided for @deletePhotoMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure?'**
+  String get deletePhotoMessage;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
 }
 
 class _AppLocalizationsDelegate

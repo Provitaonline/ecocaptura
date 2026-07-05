@@ -24,5 +24,9 @@
   "dataQuality": "Rate data quality",
   "qualityReason": "Select a reason",
   "cardinalDirections": "N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW",
-  "tilt": "Tilt"
+  "tilt": "Tilt",
+  "deletePhotoTitle": "Delete Photo",
+  "deletePhotoMessage": "Are you sure?",
+  "cancel": "Cancel",
+  "delete": "Delete"
 }

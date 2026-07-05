@@ -4,6 +4,7 @@ import '../../../core/l10n/app_localizations.dart';
 import '../data/models/capture_model.dart'; 
 import './controllers/capture_controller.dart';
 import 'camera_capture_screen.dart';
+import './widgets/full_screen_photo_view.dart';
 
 class CaptureEditorScreen extends StatefulWidget {
   final CaptureController controller;
@@ -141,48 +142,87 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
 
   // --- Helper Methods ---
   Widget _buildPhotoThumbnail(PhotoEntry photo, int index) {
+    final i18n = AppLocalizations.of(context)!;
     return Container(
       width: 85,
       height: 85,
       margin: const EdgeInsets.only(right: 10),
       child: Stack(
         children: [
-          // The image container
-          Container(
-            width: 85,
-            height: 85,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(8),
+          // 1. The Image - Now wrapped in a GestureDetector for full-screen view
+          GestureDetector(
+            onTap: () {
+              if (photo.imagePath != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => FullScreenPhotoView(imagePath: photo.imagePath!),
+                  ),
+                );
+              }
+            },
+            child: Container(
+              width: 85,
+              height: 85,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: photo.imagePath != null
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.file(
+                        File(photo.imagePath!),
+                        fit: BoxFit.cover,
+                        width: 85,
+                        height: 85,
+                      ),
+                    )
+                  : const Center(child: Icon(Icons.broken_image, color: Colors.grey)),
             ),
-            child: photo.imagePath != null
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.file(
-                      File(photo.imagePath!),
-                      fit: BoxFit.cover, 
-                      width: 85,
-                      height: 85,
-                    ),
-                  )
-                : const Center(child: Icon(Icons.broken_image, color: Colors.grey)),
           ),
-          
-          // Delete button
+
+          // 2. The Delete Button - Placed on top of the image in the Stack
           Positioned(
             right: 0,
             top: 0,
             child: GestureDetector(
-              onTap: () => setState(() => _photoEntries.removeAt(index)),
-              child: Container(
+              onTap: () async {
+                  // 1. Show the confirmation dialog
+                  final bool? shouldDelete = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title:  Text(i18n.deletePhotoTitle),
+                      content:  Text(i18n.deletePhotoMessage),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false), // Cancel
+                          child:  Text(i18n.cancel),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true), // Confirm
+                          child:  Text(i18n.delete, style: TextStyle(color: Colors.red)),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  // 2. If the user clicked "Delete", perform the removal
+                  if (shouldDelete == true) {
+                    setState(() {
+                      _photoEntries.removeAt(index);
+                    });
+                  }
+                },
+                child: Container(
                 padding: const EdgeInsets.all(2),
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  Icons.cancel, 
-                  color: Colors.grey.shade600, 
+                  Icons.cancel,
+                  color: Colors.grey.shade600,
                   size: 20,
                 ),
               ),
