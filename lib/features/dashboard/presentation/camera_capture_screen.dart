@@ -53,7 +53,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
 
       _controller = CameraController(
         backCamera,
-        ResolutionPreset.medium,
+        ResolutionPreset.veryHigh,
         enableAudio: false,
         imageFormatGroup: ImageFormatGroup.yuv420,
       );
