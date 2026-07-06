@@ -95,4 +95,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get delete => 'Delete';
+
+  @override
+  String get reasonPoorGps => 'Poor GPS';
+
+  @override
+  String get reasonBlurry => 'Blurry';
+
+  @override
+  String get reasonObstructed => 'Obstructed';
+
+  @override
+  String get reasonOther => 'Other';
 }

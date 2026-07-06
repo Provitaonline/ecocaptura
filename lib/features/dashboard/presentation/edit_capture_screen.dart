@@ -5,6 +5,7 @@ import '../data/models/capture_model.dart';
 import './controllers/capture_controller.dart';
 import 'camera_capture_screen.dart';
 import './widgets/full_screen_photo_view.dart';
+import '../../../core/constants/app_constants.dart';
 
 class CaptureEditorScreen extends StatefulWidget {
   final CaptureController controller;
@@ -57,6 +58,8 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
         id: DateTime.now().millisecondsSinceEpoch.remainder(1000000),
         description: _descController.text,
         photos: _photoEntries,
+        qualityScore: _selectedQuality, 
+        qualityReason: _selectedReason,
         status: CaptureStatus.ready,
         timestamp: DateTime.now(),
       );
@@ -260,7 +263,8 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
       children: [
         // Quality Rating
         DropdownButtonFormField<int>(
-          initialValue: _selectedQuality, // Initialize this in initState from model
+          // ignore: deprecated_member_use
+          value: _selectedQuality,
           decoration: InputDecoration(
             labelText: i18n.dataQuality,
             border: const OutlineInputBorder(),
@@ -284,15 +288,25 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
         // Reason (Visible if quality < 3)
         if (_selectedQuality < 3)
           DropdownButtonFormField<String>(
-            initialValue: _selectedReason,
+            // ignore: deprecated_member_use
+            value: _selectedReason, // e.g., 'blurry'
             decoration: InputDecoration(
               labelText: i18n.qualityReason,
               border: const OutlineInputBorder(),
             ),
-            items: ["Poor GPS", "Blurry", "Obstructed", "Other"].map((String reason) {
+            items: QualityReasons.all.map((key) {
+              // Map each constant key to its localized label
+              String label;
+              switch (key) {
+                case QualityReasons.poorGps: label = i18n.reasonPoorGps; break;
+                case QualityReasons.blurry: label = i18n.reasonBlurry; break;
+                case QualityReasons.obstructed: label = i18n.reasonObstructed; break;
+                default: label = i18n.reasonOther;
+              }
+              
               return DropdownMenuItem<String>(
-                value: reason,
-                child: Text(reason),
+                value: key,
+                child: Text(label),
               );
             }).toList(),
             onChanged: (val) => setState(() => _selectedReason = val),

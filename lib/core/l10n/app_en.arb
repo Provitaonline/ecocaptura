@@ -28,5 +28,9 @@
   "deletePhotoTitle": "Delete Photo",
   "deletePhotoMessage": "Are you sure?",
   "cancel": "Cancel",
-  "delete": "Delete"
+  "delete": "Delete",
+  "reasonPoorGps": "Poor GPS",
+  "reasonBlurry": "Blurry",
+  "reasonObstructed": "Obstructed",
+  "reasonOther": "Other"
 }

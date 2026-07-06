@@ -271,6 +271,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete'**
   String get delete;
+
+  /// No description provided for @reasonPoorGps.
+  ///
+  /// In en, this message translates to:
+  /// **'Poor GPS'**
+  String get reasonPoorGps;
+
+  /// No description provided for @reasonBlurry.
+  ///
+  /// In en, this message translates to:
+  /// **'Blurry'**
+  String get reasonBlurry;
+
+  /// No description provided for @reasonObstructed.
+  ///
+  /// In en, this message translates to:
+  /// **'Obstructed'**
+  String get reasonObstructed;
+
+  /// No description provided for @reasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get reasonOther;
 }
 
 class _AppLocalizationsDelegate
