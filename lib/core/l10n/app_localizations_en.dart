@@ -107,4 +107,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reasonOther => 'Other';
+
+  @override
+  String get discardChangesTitle => 'Discard changes?';
+
+  @override
+  String get discardChangesMessage =>
+      'You have unsaved changes. Are you sure you want to leave?';
+
+  @override
+  String get keepEditing => 'Keep editing';
+
+  @override
+  String get discard => 'Discard';
 }

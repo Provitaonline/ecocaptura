@@ -88,7 +88,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get deletePhotoTitle => 'Borrar Photo';
 
   @override
-  String get deletePhotoMessage => 'Seguro?';
+  String get deletePhotoMessage => '¿Seguro?';
 
   @override
   String get cancel => 'Cancelar';
@@ -107,4 +107,16 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get reasonOther => 'Otra';
+
+  @override
+  String get discardChangesTitle => '¿Descartar cambios?';
+
+  @override
+  String get discardChangesMessage => 'Se han hecho cambios. ¿Descartar?';
+
+  @override
+  String get keepEditing => 'Continuar';
+
+  @override
+  String get discard => 'Descartar';
 }

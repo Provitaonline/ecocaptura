@@ -26,11 +26,15 @@
   "cardinalDirections": "N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSO,SO,OSO,O,ONO,NO,NNO",
   "tilt": "Inclinación",
   "deletePhotoTitle": "Borrar Photo",
-  "deletePhotoMessage": "Seguro?",
+  "deletePhotoMessage": "¿Seguro?",
   "cancel": "Cancelar",
   "delete": "Borrar",
   "reasonPoorGps": "Mala señal de GPS",
   "reasonBlurry": "Borroso",
   "reasonObstructed": "Obstrucción",
-  "reasonOther": "Otra"
+  "reasonOther": "Otra",
+  "discardChangesTitle": "¿Descartar cambios?",
+  "discardChangesMessage": "Se han hecho cambios. ¿Descartar?",
+  "keepEditing": "Continuar",
+  "discard": "Descartar"
 }

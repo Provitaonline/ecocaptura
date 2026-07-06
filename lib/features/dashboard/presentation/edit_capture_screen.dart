@@ -6,6 +6,7 @@ import './controllers/capture_controller.dart';
 import 'camera_capture_screen.dart';
 import './widgets/full_screen_photo_view.dart';
 import '../../../core/constants/app_constants.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class CaptureEditorScreen extends StatefulWidget {
   final CaptureController controller;
@@ -26,22 +27,57 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
   late List<PhotoEntry> _photoEntries;
   late int _selectedQuality;
   late String? _selectedReason;
+
+  late int _initialQuality;
+  String? _initialReason;
+  late String _initialDescription;
+  late List<PhotoEntry> _initialPhotos;
   
   bool get isEditing => widget.existingCapture != null;
 
   @override
   void initState() {
     super.initState();
+
+    _initialQuality = widget.existingCapture?.qualityScore ?? 3;
+    _initialReason = widget.existingCapture?.qualityReason;
+    _initialDescription = widget.existingCapture?.description ?? '';
+    _initialPhotos = List.from(widget.existingCapture?.photos ?? []);
+
     _descController = TextEditingController(text: widget.existingCapture?.description ?? '');
+    _descController.addListener(_updateButtonState);
     _photoEntries = List.from(widget.existingCapture?.photos ?? []);
     _selectedQuality = widget.existingCapture?.qualityScore ?? 3;
     _selectedReason = widget.existingCapture?.qualityReason;
+  }
+
+  void _updateButtonState() {
+    setState(() {}); 
   }
 
   @override
   void dispose() {
     _descController.dispose();
     super.dispose();
+  }
+
+  bool _isSaveEnabled() {
+    final hasPhoto = _photoEntries.isNotEmpty;
+    final hasDescription = _descController.text.trim().isNotEmpty;
+    
+    return hasPhoto && hasDescription;
+  }
+
+  bool _isDirty() {
+
+    if (_descController.text != _initialDescription) return true;
+    if (_selectedQuality != _initialQuality) return true;
+    final currentReason = (_selectedReason == null || _selectedReason == "") ? null : _selectedReason;
+    final initialReason = (_initialReason == null || _initialReason == "") ? null : _initialReason;
+    if (currentReason != initialReason) return true;
+        if (_photoEntries.length != _initialPhotos.length) return true;
+    
+    return false;
   }
 
   void _finishCapture() {
@@ -72,74 +108,93 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
   Widget build(BuildContext context) {
     final i18n = AppLocalizations.of(context)!;
     
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(isEditing ? i18n.editCapture : i18n.newCapture),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        behavior: HitTestBehavior.opaque,
-        child: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(i18n.photos, style: Theme.of(context).textTheme.titleMedium),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        height: 85,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: _photoEntries.length + 1,
-                          itemBuilder: (context, index) {
-                            if (index == _photoEntries.length) return _buildAddPhotoPlaceholder();
-                            return _buildPhotoThumbnail(_photoEntries[index], index);
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 28),
-                      Text(i18n.captureDetails, style: Theme.of(context).textTheme.titleMedium),
-                      const SizedBox(height: 10),
-                      _buildQualityFields(i18n),
-                      TextField(
-                        controller: _descController,
-                        textInputAction: TextInputAction.done,
-                        onSubmitted: (_) => FocusScope.of(context).unfocus(),
-                        decoration: InputDecoration(
-                          labelText: i18n.description,
-                          border: const OutlineInputBorder(),
-                          hintText: i18n.descriptionHint,
-                          alignLabelWithHint: true,
-                        ),
-                        maxLines: 3,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: _finishCapture,
-                    child: Text(isEditing ? i18n.saveChanges : i18n.saveCapture),
-                  ),
-                ),
-              ),
-            ],
+    return PopScope(
+
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+
+        if (_isDirty()) {
+          final navigator = Navigator.of(context);
+          
+          final shouldQuit = await _showExitConfirmationDialog(context);
+          
+          if (shouldQuit == true && mounted) {
+            navigator.pop();
+          }
+        } else {
+          Navigator.of(context).pop();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(isEditing ? i18n.editCapture : i18n.newCapture),
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () => Navigator.maybePop(context),
           ),
         ),
-      ),
+        body: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          behavior: HitTestBehavior.opaque,
+          child: SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(i18n.photos, style: Theme.of(context).textTheme.titleMedium),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          height: 85,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: _photoEntries.length + 1,
+                            itemBuilder: (context, index) {
+                              if (index == _photoEntries.length) return _buildAddPhotoPlaceholder();
+                              return _buildPhotoThumbnail(_photoEntries[index], index);
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 28),
+                        Text(i18n.captureDetails, style: Theme.of(context).textTheme.titleMedium),
+                        const SizedBox(height: 10),
+                        _buildQualityFields(i18n),
+                        TextField(
+                          controller: _descController,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (_) => FocusScope.of(context).unfocus(),
+                          decoration: InputDecoration(
+                            labelText: i18n.description,
+                            border: const OutlineInputBorder(),
+                            hintText: i18n.descriptionHint,
+                            alignLabelWithHint: true,
+                          ),
+                          maxLines: 3,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: _isSaveEnabled() ? _finishCapture : null,
+                      child: Text(isEditing ? i18n.saveChanges : i18n.saveCapture),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      )
     );
   }
 
@@ -204,7 +259,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                         ),
                         TextButton(
                           onPressed: () => Navigator.pop(context, true), // Confirm
-                          child:  Text(i18n.delete, style: TextStyle(color: Colors.red)),
+                          child:  Text(i18n.delete, style: const TextStyle(color: Colors.red)),
                         ),
                       ],
                     ),
@@ -214,6 +269,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                   if (shouldDelete == true) {
                     setState(() {
                       _photoEntries.removeAt(index);
+                      _updateButtonState();
                     });
                   }
                 },
@@ -246,6 +302,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
           setState(() {
             newEntry.id = DateTime.now().millisecondsSinceEpoch.toString();
             _photoEntries.add(newEntry);
+            _updateButtonState();
           });
         }
       },
@@ -261,35 +318,39 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Quality Rating
-        DropdownButtonFormField<int>(
-          // ignore: deprecated_member_use
-          value: _selectedQuality,
-          decoration: InputDecoration(
-            labelText: i18n.dataQuality,
-            border: const OutlineInputBorder(),
+        Text(i18n.dataQuality, style: Theme.of(context).textTheme.bodySmall),
+        const SizedBox(height: 8),
+        RatingBar.builder(
+          initialRating: _selectedQuality.toDouble(),
+          minRating: 1,
+          direction: Axis.horizontal,
+          allowHalfRating: false,
+          itemCount: 3,
+          itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+          itemBuilder: (context, _) => const Icon(
+            Icons.star,
+            color: Colors.amber,
           ),
-          items: [1, 2, 3].map((int val) {
-            return DropdownMenuItem<int>(
-              value: val,
-              child: Text("$val Star"),
-            );
-          }).toList(),
-          onChanged: (val) {
+          onRatingUpdate: (rating) {
             setState(() {
-              _selectedQuality = val!;
+              _selectedQuality = rating.toInt();
               if (_selectedQuality == 3) {
                 _selectedReason = "";
+              } else {
+                if (_selectedReason == "" || _selectedReason == null) {
+                  _selectedReason = QualityReasons.other; 
+                }
               }
             });
           },
         ),
         const SizedBox(height: 16),
+        
         // Reason (Visible if quality < 3)
         if (_selectedQuality < 3)
           DropdownButtonFormField<String>(
             // ignore: deprecated_member_use
-            value: _selectedReason, // e.g., 'blurry'
+            value: _selectedReason,
             decoration: InputDecoration(
               labelText: i18n.qualityReason,
               border: const OutlineInputBorder(),
@@ -311,8 +372,24 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
             }).toList(),
             onChanged: (val) => setState(() => _selectedReason = val),
           ),
-        const SizedBox(height: 28), // Spacer before description
+        const SizedBox(height: 28),
       ],
+    );
+  }
+
+
+  Future<bool?> _showExitConfirmationDialog(BuildContext context) {
+    final i18n = AppLocalizations.of(context)!;
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(i18n.discardChangesTitle),
+        content: Text(i18n.discardChangesMessage),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(i18n.keepEditing)),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: Text(i18n.discard)),
+        ],
+      ),
     );
   }
 }

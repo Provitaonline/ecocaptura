@@ -32,5 +32,9 @@
   "reasonPoorGps": "Poor GPS",
   "reasonBlurry": "Blurry",
   "reasonObstructed": "Obstructed",
-  "reasonOther": "Other"
+  "reasonOther": "Other",
+  "discardChangesTitle": "Discard changes?",
+  "discardChangesMessage": "You have unsaved changes. Are you sure you want to leave?",
+  "keepEditing": "Keep editing",
+  "discard": "Discard"
 }
