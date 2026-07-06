@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../../core/l10n/app_localizations.dart';
+import '../../../core/extensions/content_extensions.dart';
 import '../data/models/capture_model.dart'; 
 import './controllers/capture_controller.dart';
 import 'camera_capture_screen.dart';
@@ -106,7 +106,6 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final i18n = AppLocalizations.of(context)!;
     
     return PopScope(
 
@@ -128,7 +127,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(isEditing ? i18n.editCapture : i18n.newCapture),
+          title: Text(isEditing ? context.i18n.editCapture : context.i18n.newCapture),
           leading: IconButton(
             icon: const Icon(Icons.close),
             onPressed: () => Navigator.maybePop(context),
@@ -146,7 +145,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(i18n.photos, style: Theme.of(context).textTheme.titleMedium),
+                        Text(context.i18n.photos, style: Theme.of(context).textTheme.titleMedium),
                         const SizedBox(height: 10),
                         SizedBox(
                           height: 85,
@@ -160,17 +159,17 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                           ),
                         ),
                         const SizedBox(height: 28),
-                        Text(i18n.captureDetails, style: Theme.of(context).textTheme.titleMedium),
+                        Text(context.i18n.captureDetails, style: Theme.of(context).textTheme.titleMedium),
                         const SizedBox(height: 10),
-                        _buildQualityFields(i18n),
+                        _buildQualityFields(),
                         TextField(
                           controller: _descController,
                           textInputAction: TextInputAction.done,
                           onSubmitted: (_) => FocusScope.of(context).unfocus(),
                           decoration: InputDecoration(
-                            labelText: i18n.description,
+                            labelText: context.i18n.description,
                             border: const OutlineInputBorder(),
-                            hintText: i18n.descriptionHint,
+                            hintText: context.i18n.descriptionHint,
                             alignLabelWithHint: true,
                           ),
                           maxLines: 3,
@@ -186,7 +185,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: _isSaveEnabled() ? _finishCapture : null,
-                      child: Text(isEditing ? i18n.saveChanges : i18n.saveCapture),
+                      child: Text(isEditing ? context.i18n.saveChanges : context.i18n.saveCapture),
                     ),
                   ),
                 ),
@@ -200,7 +199,6 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
 
   // --- Helper Methods ---
   Widget _buildPhotoThumbnail(PhotoEntry photo, int index) {
-    final i18n = AppLocalizations.of(context)!;
     return Container(
       width: 85,
       height: 85,
@@ -250,16 +248,16 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                   final bool? shouldDelete = await showDialog<bool>(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title:  Text(i18n.deletePhotoTitle),
-                      content:  Text(i18n.deletePhotoMessage),
+                      title:  Text(context.i18n.deletePhotoTitle),
+                      content:  Text(context.i18n.deletePhotoMessage),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context, false), // Cancel
-                          child:  Text(i18n.cancel),
+                          child:  Text(context.i18n.cancel),
                         ),
                         TextButton(
                           onPressed: () => Navigator.pop(context, true), // Confirm
-                          child:  Text(i18n.delete, style: const TextStyle(color: Colors.red)),
+                          child:  Text(context.i18n.delete, style: const TextStyle(color: Colors.red)),
                         ),
                       ],
                     ),
@@ -314,11 +312,11 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
     );
   }
 
-  Widget _buildQualityFields(AppLocalizations i18n) {
+  Widget _buildQualityFields() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(i18n.dataQuality, style: Theme.of(context).textTheme.bodySmall),
+        Text(context.i18n.dataQuality, style: Theme.of(context).textTheme.bodySmall),
         const SizedBox(height: 8),
         RatingBar.builder(
           initialRating: _selectedQuality.toDouble(),
@@ -352,17 +350,17 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
             // ignore: deprecated_member_use
             value: _selectedReason,
             decoration: InputDecoration(
-              labelText: i18n.qualityReason,
+              labelText: context.i18n.qualityReason,
               border: const OutlineInputBorder(),
             ),
             items: QualityReasons.all.map((key) {
               // Map each constant key to its localized label
               String label;
               switch (key) {
-                case QualityReasons.poorGps: label = i18n.reasonPoorGps; break;
-                case QualityReasons.blurry: label = i18n.reasonBlurry; break;
-                case QualityReasons.obstructed: label = i18n.reasonObstructed; break;
-                default: label = i18n.reasonOther;
+                case QualityReasons.poorGps: label = context.i18n.reasonPoorGps; break;
+                case QualityReasons.blurry: label = context.i18n.reasonBlurry; break;
+                case QualityReasons.obstructed: label = context.i18n.reasonObstructed; break;
+                default: label = context.i18n.reasonOther;
               }
               
               return DropdownMenuItem<String>(
@@ -379,15 +377,14 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
 
 
   Future<bool?> _showExitConfirmationDialog(BuildContext context) {
-    final i18n = AppLocalizations.of(context)!;
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(i18n.discardChangesTitle),
-        content: Text(i18n.discardChangesMessage),
+        title: Text(context.i18n.discardChangesTitle),
+        content: Text(context.i18n.discardChangesMessage),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(i18n.keepEditing)),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: Text(i18n.discard)),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(context.i18n.keepEditing)),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: Text(context.i18n.discard)),
         ],
       ),
     );

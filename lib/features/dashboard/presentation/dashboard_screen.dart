@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/l10n/app_localizations.dart';
+import '../../../core/extensions/content_extensions.dart';
 import 'controllers/capture_controller.dart';
 import 'edit_capture_screen.dart';
 import 'widgets/dashboard_drawer.dart';
@@ -23,7 +23,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final i18n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -35,23 +34,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Icon(Icons.eco, color: Colors.teal.shade300, size: 28),
               const SizedBox(width: 8),
               Text(
-                i18n.appTitle,
+                context.i18n.appTitle,
                 style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5),
               ),
             ],
           ),
         ),
       ),
-      endDrawer: DashboardDrawer(i18n: i18n),
+      endDrawer: const DashboardDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(i18n.recentCaptures, style: Theme.of(context).textTheme.titleLarge),
+            Text(context.i18n.recentCaptures, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 10),
             Expanded(
-              child: CaptureList(controller: _captureController, i18n: i18n),
+              child: CaptureList(controller: _captureController),
             ),
           ],
         ),
@@ -67,7 +66,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           );
         },
-        label: Text(i18n.btnNewCapture),
+        label: Text(context.i18n.btnNewCapture),
         icon: const Icon(Icons.add_a_photo),
         backgroundColor: Colors.teal.shade300,
         foregroundColor: Colors.black,

@@ -3,13 +3,12 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import '../controllers/capture_controller.dart';
 import '../../data/services/storage_manager.dart';
 import '../edit_capture_screen.dart';
-import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/extensions/content_extensions.dart';
 
 class CaptureList extends StatelessWidget {
   final CaptureController controller;
-  final AppLocalizations i18n;
 
-  const CaptureList({super.key, required this.controller, required this.i18n});
+  const CaptureList({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +16,7 @@ class CaptureList extends StatelessWidget {
       listenable: controller,
       builder: (context, _) {
         if (controller.captures.isEmpty) {
-          return Text(i18n.noCaptures, style: const TextStyle(fontStyle: FontStyle.italic));
+          return Text(context.i18n.noCaptures, style: const TextStyle(fontStyle: FontStyle.italic));
         }
         
         // Create the reversed list so the most recent items appear at index 0
@@ -57,7 +56,7 @@ class CaptureList extends StatelessWidget {
               // The main card item that the user interacts with
               child: Card(
                 child: ListTile(
-                  title: Text(item['description'] ?? i18n.unnamedCapture),
+                  title: Text(item['description'] ?? context.i18n.unnamedCapture),
                   subtitle: Text(item['timestamp'] ?? ''),
                   leading: const Icon(Icons.photo_library),
                   // Inside your list item's onTap

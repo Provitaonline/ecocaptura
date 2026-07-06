@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/extensions/content_extensions.dart';
 import '../../../../core/l10n/locale_controller.dart';
 
 class DashboardDrawer extends StatelessWidget {
-  final AppLocalizations i18n;
 
-  const DashboardDrawer({super.key, required this.i18n});
+  const DashboardDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,21 +21,21 @@ class DashboardDrawer extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  i18n.drawerHeader,
+                  context.i18n.drawerHeader,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SThemeText(text: i18n.drawerSubtitle, color: Colors.white70),
+                SThemeText(text: context.i18n.drawerSubtitle, color: Colors.white70),
               ],
             ),
           ),
           ListTile(
             leading: const Icon(Icons.qr_code_scanner),
-            title: Text(i18n.menuPairDevice),
-            subtitle: Text(i18n.menuPairSubtitle),
+            title: Text(context.i18n.menuPairDevice),
+            subtitle: Text(context.i18n.menuPairSubtitle),
             onTap: () {
               Navigator.pop(context); // Close drawer
               // TODO: Route to QR scanning pipeline
@@ -44,7 +43,7 @@ class DashboardDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.language),
-            title: Text(i18n.menuLanguage),
+            title: Text(context.i18n.menuLanguage),
             subtitle: Text(
               Localizations.localeOf(context).languageCode == 'es'
                   ? 'English'
@@ -63,7 +62,7 @@ class DashboardDrawer extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.info_outline),
-            title: Text(i18n.menuAbout),
+            title: Text(context.i18n.menuAbout),
             onTap: () {
               Navigator.pop(context); // Close drawer
               // TODO: Show application credits
