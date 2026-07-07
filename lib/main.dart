@@ -1,18 +1,30 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'app.dart';
+import 'core/l10n/locale_controller.dart';
+import './core/services/preferences_service.dart';
 
-void main() {
-  // 1. Hook native window manager bindings
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await PreferencesService.init();
+
+  final savedLanguage = PreferencesService().language;
+  final systemLanguage = Platform.localeName.split('_')[0]; // e.g., 'pt'
   
-  // 2. Globally allow portrait and landscape layouts
+  // Supported languages
+  const supported = ['en', 'es'];
+
+  final String finalLocale = savedLanguage ?? (supported.contains(systemLanguage) ? systemLanguage : 'en');
+
+  LocaleController.instance.setLocale(Locale(finalLocale));
+  
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
   ]);
 
-  // 3. Launch the orchestrator app
   runApp(const EcocapturaApp());
 }

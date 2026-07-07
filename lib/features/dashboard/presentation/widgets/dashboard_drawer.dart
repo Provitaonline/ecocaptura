@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/extensions/content_extensions.dart';
 import '../../../../core/l10n/locale_controller.dart';
+import '../../../../core/services/preferences_service.dart';
 
 class DashboardDrawer extends StatelessWidget {
 
@@ -49,14 +50,15 @@ class DashboardDrawer extends StatelessWidget {
                   ? 'English'
                   : 'Español',
             ),
-            onTap: () {
-              Navigator.pop(context); // Close drawer
+            onTap: () async {
+              Navigator.pop(context); 
               
-              // Toggle language logic
               final currentLanguage = Localizations.localeOf(context).languageCode;
-              LocaleController.instance.setLocale(
-                Locale(currentLanguage == 'es' ? 'en' : 'es'),
-              );
+              final newLocale = Locale(currentLanguage == 'es' ? 'en' : 'es');
+
+              LocaleController.instance.setLocale(newLocale);
+              
+              await PreferencesService().setLanguage(newLocale.languageCode);
             },
           ),
           const Divider(),

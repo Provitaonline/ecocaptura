@@ -8,14 +8,18 @@ class EcocapturaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 2. Listen to the language state changes dynamically
     return ValueListenableBuilder<Locale?>(
       valueListenable: LocaleController.instance.localeNotifier,
       builder: (context, currentLocale, child) {
         return MaterialApp(
           title: 'ecocaptura',
           debugShowCheckedModeBanner: false,
-          locale: currentLocale, // 3. Pass the active override locale down
+          
+          locale: currentLocale, 
+          
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          
           theme: ThemeData(
             useMaterial3: true,
             colorScheme: ColorScheme.fromSeed(
@@ -23,8 +27,6 @@ class EcocapturaApp extends StatelessWidget {
               brightness: Brightness.dark,
             ),
           ),
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
           home: const DashboardScreen(),
         );
       },
