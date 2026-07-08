@@ -36,5 +36,6 @@
   "discardChangesTitle": "Discard changes?",
   "discardChangesMessage": "You have unsaved changes. Are you sure you want to leave?",
   "keepEditing": "Keep editing",
-  "discard": "Discard"
+  "discard": "Discard",
+  "captureInfo": "Capture info"
 }

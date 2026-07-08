@@ -36,5 +36,6 @@
   "discardChangesTitle": "¿Descartar cambios?",
   "discardChangesMessage": "Se han hecho cambios. ¿Descartar?",
   "keepEditing": "Continuar",
-  "discard": "Descartar"
+  "discard": "Descartar",
+  "captureInfo": "Información sobre la captura"
 }

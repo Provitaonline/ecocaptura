@@ -319,6 +319,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Discard'**
   String get discard;
+
+  /// No description provided for @captureInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture info'**
+  String get captureInfo;
 }
 
 class _AppLocalizationsDelegate

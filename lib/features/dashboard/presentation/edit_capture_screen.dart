@@ -11,11 +11,13 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 class CaptureEditorScreen extends StatefulWidget {
   final CaptureController controller;
   final CaptureModel? existingCapture;
+  final bool isReadOnly;
 
   const CaptureEditorScreen({
     super.key, 
     required this.controller, 
     this.existingCapture,
+    this.isReadOnly = false,
   });
 
   @override
@@ -127,7 +129,11 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(isEditing ? context.i18n.editCapture : context.i18n.newCapture),
+          title: Text(
+            widget.isReadOnly 
+                ? context.i18n.captureDetails 
+                : (isEditing ? context.i18n.editCapture : context.i18n.newCapture)
+          ),
           leading: IconButton(
             icon: const Icon(Icons.close),
             onPressed: () => Navigator.maybePop(context),
@@ -159,11 +165,13 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                           ),
                         ),
                         const SizedBox(height: 28),
-                        Text(context.i18n.captureDetails, style: Theme.of(context).textTheme.titleMedium),
+                        Text(context.i18n.captureInfo, style: Theme.of(context).textTheme.titleMedium),
                         const SizedBox(height: 10),
                         _buildQualityFields(),
                         TextField(
                           controller: _descController,
+                          readOnly: widget.isReadOnly,
+                          enabled: !widget.isReadOnly,
                           textInputAction: TextInputAction.done,
                           onSubmitted: (_) => FocusScope.of(context).unfocus(),
                           decoration: InputDecoration(
@@ -178,17 +186,18 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: _isSaveEnabled() ? _finishCapture : null,
-                      child: Text(isEditing ? context.i18n.saveChanges : context.i18n.saveCapture),
+                if (!widget.isReadOnly)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: _isSaveEnabled() ? _finishCapture : null,
+                        child: Text(isEditing ? context.i18n.saveChanges : context.i18n.saveCapture),
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           ),
@@ -239,58 +248,60 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
           ),
 
           // 2. The Delete Button - Placed on top of the image in the Stack
-          Positioned(
-            right: 0,
-            top: 0,
-            child: GestureDetector(
-              onTap: () async {
-                  // 1. Show the confirmation dialog
-                  final bool? shouldDelete = await showDialog<bool>(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title:  Text(context.i18n.deletePhotoTitle),
-                      content:  Text(context.i18n.deletePhotoMessage),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, false), // Cancel
-                          child:  Text(context.i18n.cancel),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, true), // Confirm
-                          child:  Text(context.i18n.delete, style: const TextStyle(color: Colors.red)),
-                        ),
-                      ],
-                    ),
-                  );
+          if (!widget.isReadOnly)
+            Positioned(
+              right: 0,
+              top: 0,
+              child: GestureDetector(
+                onTap: () async {
+                    // 1. Show the confirmation dialog
+                    final bool? shouldDelete = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title:  Text(context.i18n.deletePhotoTitle),
+                        content:  Text(context.i18n.deletePhotoMessage),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false), // Cancel
+                            child:  Text(context.i18n.cancel),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, true), // Confirm
+                            child:  Text(context.i18n.delete, style: const TextStyle(color: Colors.red)),
+                          ),
+                        ],
+                      ),
+                    );
 
-                  // 2. If the user clicked "Delete", perform the removal
-                  if (shouldDelete == true) {
-                    setState(() {
-                      _photoEntries.removeAt(index);
-                      _updateButtonState();
-                    });
-                  }
-                },
-                child: Container(
-                padding: const EdgeInsets.all(2),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.cancel,
-                  color: Colors.grey.shade600,
-                  size: 20,
+                    // 2. If the user clicked "Delete", perform the removal
+                    if (shouldDelete == true) {
+                      setState(() {
+                        _photoEntries.removeAt(index);
+                        _updateButtonState();
+                      });
+                    }
+                  },
+                  child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.cancel,
+                    color: Colors.grey.shade600,
+                    size: 20,
+                  ),
                 ),
               ),
             ),
-          ),
         ],
       ),
     );
   }
 
   Widget _buildAddPhotoPlaceholder() {
+    if (widget.isReadOnly) return const SizedBox.shrink();
     return InkWell(
       onTap: () async {
         final PhotoEntry? newEntry = await Navigator.push<PhotoEntry>(
@@ -319,6 +330,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
         Text(context.i18n.dataQuality, style: Theme.of(context).textTheme.bodySmall),
         const SizedBox(height: 8),
         RatingBar.builder(
+          ignoreGestures: widget.isReadOnly,
           initialRating: _selectedQuality.toDouble(),
           minRating: 1,
           direction: Axis.horizontal,
@@ -368,7 +380,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                 child: Text(label),
               );
             }).toList(),
-            onChanged: (val) => setState(() => _selectedReason = val),
+            onChanged: widget.isReadOnly ? null : (val) => setState(() => _selectedReason = val),
           ),
         const SizedBox(height: 28),
       ],

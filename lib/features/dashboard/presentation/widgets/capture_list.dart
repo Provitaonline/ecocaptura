@@ -52,23 +52,24 @@ class CaptureList extends StatelessWidget {
               ),
               // Full-card tap interaction
               child: InkWell(
-                onTap: item.status == CaptureStatus.inProgress
-                      ? () async {
-                          final int id = item.id!;
-                          final fullCapture = await StorageManager().loadCapture(id);
-                          
-                          if (fullCapture != null && context.mounted) {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => CaptureEditorScreen(
-                                  controller: controller,
-                                  existingCapture: fullCapture,
-                                ),
-                              ),
-                            );
-                          }
-                        }
-                      : null,
+                onTap: () async {
+                  final int id = item.id!;
+                  final fullCapture = await StorageManager().loadCapture(id);
+                  
+                  if (fullCapture != null && context.mounted) {
+                    final bool readOnly = item.status != CaptureStatus.inProgress;
+                    
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => CaptureEditorScreen(
+                          controller: controller,
+                          existingCapture: fullCapture,
+                          isReadOnly: readOnly, 
+                        ),
+                      ),
+                    );
+                  }
+                },
                 child: Card(
                   margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   child: Padding(

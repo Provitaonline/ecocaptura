@@ -119,4 +119,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get discard => 'Descartar';
+
+  @override
+  String get captureInfo => 'Información sobre la captura';
 }

@@ -120,4 +120,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get discard => 'Discard';
+
+  @override
+  String get captureInfo => 'Capture info';
 }
