@@ -31,7 +31,7 @@ class CaptureList extends StatelessWidget {
             final item = reversedCaptures[index];
 
             return Slidable(
-              key: Key(item['id']?.toString() ?? index.toString()),
+              key: Key(item.id?.toString() ?? index.toString()),
               endActionPane: ActionPane(
                 motion: const ScrollMotion(),
                 extentRatio: 0.25,
@@ -53,7 +53,7 @@ class CaptureList extends StatelessWidget {
               // Full-card tap interaction
               child: InkWell(
                 onTap: () async {
-                  final int id = item['id'];
+                  final int id = item.id!;
                   final fullCapture = await StorageManager().loadCapture(id);
                   
                   if (fullCapture != null && context.mounted) {
@@ -77,9 +77,9 @@ class CaptureList extends StatelessWidget {
                         // Thumbnail Section
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: (item['photos'] != null && (item['photos'] as List).isNotEmpty)
+                          child: item.photos.isNotEmpty
                               ? Image.file(
-                                  File(item['photos'][0]['imagePath'] as String),
+                                  File(item.photos.first.imagePath as String),
                                   fit: BoxFit.cover,
                                   width: 85,
                                   height: 85,
@@ -100,22 +100,21 @@ class CaptureList extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                item['description'] ?? context.i18n.unnamedCapture,
+                                item.description ?? context.i18n.unnamedCapture,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                DateFormat('yyyy-MM-dd HH:mm').format(
-                                    DateTime.parse(item['timestamp'] as String)),
+                                DateFormat('yyyy-MM-dd HH:mm').format(item.timestamp!),
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                               const SizedBox(height: 4),
                               Row(
                                 children: List.generate(3, (index) {
                                   return Icon(
-                                    index < (item['qualityScore'] ?? 0) ? Icons.star : Icons.star_border,
+                                    index < (item.qualityScore ?? 0) ? Icons.star : Icons.star_border,
                                     size: 16,
                                     color: Colors.amber,
                                   );
@@ -127,8 +126,8 @@ class CaptureList extends StatelessWidget {
                         // Status Toggle
                         IconButton(
                           icon: Icon(
-                            item['status'] == CaptureStatus.ready ? Icons.send : Icons.edit_note,
-                            color: item['status'] == CaptureStatus.ready ? Colors.teal : Colors.grey,
+                            item.status == CaptureStatus.ready ? Icons.send : Icons.edit_note,
+                            color: item.status == CaptureStatus.ready ? Colors.teal : Colors.grey,
                           ),
                           onPressed: () {
                             // Add your logic to toggle status here
