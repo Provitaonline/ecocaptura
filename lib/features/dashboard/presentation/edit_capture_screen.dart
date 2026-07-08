@@ -96,7 +96,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
         photos: _photoEntries,
         qualityScore: _selectedQuality, 
         qualityReason: _selectedReason,
-        status: CaptureStatus.ready,
+        status: CaptureStatus.inProgress,
         timestamp: DateTime.now(),
       );
       widget.controller.addCapture(newCapture);

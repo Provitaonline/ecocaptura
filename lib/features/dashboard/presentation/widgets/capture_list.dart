@@ -52,21 +52,23 @@ class CaptureList extends StatelessWidget {
               ),
               // Full-card tap interaction
               child: InkWell(
-                onTap: () async {
-                  final int id = item.id!;
-                  final fullCapture = await StorageManager().loadCapture(id);
-                  
-                  if (fullCapture != null && context.mounted) {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => CaptureEditorScreen(
-                          controller: controller,
-                          existingCapture: fullCapture,
-                        ),
-                      ),
-                    );
-                  }
-                },
+                onTap: item.status == CaptureStatus.inProgress
+                      ? () async {
+                          final int id = item.id!;
+                          final fullCapture = await StorageManager().loadCapture(id);
+                          
+                          if (fullCapture != null && context.mounted) {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => CaptureEditorScreen(
+                                  controller: controller,
+                                  existingCapture: fullCapture,
+                                ),
+                              ),
+                            );
+                          }
+                        }
+                      : null,
                 child: Card(
                   margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   child: Padding(
@@ -125,14 +127,18 @@ class CaptureList extends StatelessWidget {
                         ),
                         // Status Toggle
                         IconButton(
-                          icon: Icon(
-                            item.status == CaptureStatus.ready ? Icons.send : Icons.edit_note,
-                            color: item.status == CaptureStatus.ready ? Colors.teal : Colors.grey,
-                          ),
-                          onPressed: () {
-                            // Add your logic to toggle status here
-                          },
-                        ),
+                          icon: _getStatusIcon(item.status),
+                          // Enabled for everything EXCEPT 'uploaded'
+                          onPressed: item.status == CaptureStatus.uploaded 
+                              ? null 
+                              : () async {
+                                  final newStatus = (item.status == CaptureStatus.ready) 
+                                      ? CaptureStatus.inProgress 
+                                      : CaptureStatus.ready;
+                                      
+                                  await controller.updateCapture(item.copyWith(status: newStatus));
+                                },
+                        )
                       ],
                     ),
                   ),
@@ -144,4 +150,21 @@ class CaptureList extends StatelessWidget {
       },
     );
   }
+}
+
+Widget _getStatusIcon(CaptureStatus status) {
+  return Icon(
+    switch (status) {
+      CaptureStatus.inProgress => Icons.circle_outlined,
+      CaptureStatus.ready      => Icons.check_circle,
+      CaptureStatus.uploaded   => Icons.cloud_done,
+      CaptureStatus.error      => Icons.error,
+    },
+    color: switch (status) {
+      CaptureStatus.inProgress => Colors.grey,
+      CaptureStatus.ready      => Colors.teal,
+      CaptureStatus.uploaded   => Colors.blue,
+      CaptureStatus.error      => Colors.red,
+    },
+  );
 }

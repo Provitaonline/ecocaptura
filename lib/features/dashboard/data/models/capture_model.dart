@@ -6,6 +6,7 @@ enum CaptureStatus {
   inProgress,
   ready,
   uploaded,
+  error,
 }
 
 @JsonSerializable(explicitToJson: true)
