@@ -85,7 +85,10 @@ class StorageManager {
       'id': model.id,
       'timestamp': model.timestamp?.toIso8601String(),
       'description': model.description,
+      'qualityScore': model.qualityScore,
+      'qualityReason': model.qualityReason,
       'status': model.status.index,
+      'photos': model.photos.map((p) => p.toJson()).toList(),
     };
 
     // Update if exists, else append

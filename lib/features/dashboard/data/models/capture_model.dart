@@ -76,6 +76,7 @@ class CaptureModel {
     CaptureStatus? status,
     int? qualityScore,
     String? qualityReason,
+    @JsonKey(fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)
     DateTime? timestamp,
   }) {
     return CaptureModel(
@@ -95,5 +96,8 @@ class CaptureModel {
 }
 
 // Helpers for the JSON converter
+DateTime? _dateTimeFromJson(String? date) => date != null ? DateTime.tryParse(date) : null;
+String? _dateTimeToJson(DateTime? date) => date?.toIso8601String();
+
 CaptureStatus _statusFromJson(int index) => CaptureStatus.values[index];
 int _statusToJson(CaptureStatus status) => status.index;
