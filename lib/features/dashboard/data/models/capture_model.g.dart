@@ -58,7 +58,6 @@ Map<String, dynamic> _$PhotoEntryToJson(PhotoEntry instance) =>
 
 CaptureModel _$CaptureModelFromJson(Map<String, dynamic> json) => CaptureModel(
   id: (json['id'] as num?)?.toInt(),
-  remoteId: json['remoteId'] as String?,
   description: json['description'] as String?,
   photos: (json['photos'] as List<dynamic>)
       .map((e) => PhotoEntry.fromJson(e as Map<String, dynamic>))
@@ -74,7 +73,6 @@ CaptureModel _$CaptureModelFromJson(Map<String, dynamic> json) => CaptureModel(
 Map<String, dynamic> _$CaptureModelToJson(CaptureModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'remoteId': instance.remoteId,
       'description': instance.description,
       'photos': instance.photos.map((e) => e.toJson()).toList(),
       'qualityScore': instance.qualityScore,

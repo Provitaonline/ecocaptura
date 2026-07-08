@@ -45,7 +45,6 @@ class PhotoEntry {
 @JsonSerializable(explicitToJson: true)
 class CaptureModel {
   int? id;
-  String? remoteId;
   String? description;
   List<PhotoEntry> photos;
 
@@ -59,7 +58,6 @@ class CaptureModel {
 
   CaptureModel({
     this.id, 
-    this.remoteId, 
     this.description, 
     required this.photos,
     this.qualityScore = 3, // Default
@@ -70,7 +68,6 @@ class CaptureModel {
 
   CaptureModel copyWith({
     int? id,
-    String? remoteId,
     String? description,
     List<PhotoEntry>? photos,
     CaptureStatus? status,
@@ -81,7 +78,6 @@ class CaptureModel {
   }) {
     return CaptureModel(
       id: id ?? this.id,
-      remoteId: remoteId ?? this.remoteId,
       description: description ?? this.description,
       photos: photos ?? this.photos,
       qualityScore: qualityScore ?? this.qualityScore,
