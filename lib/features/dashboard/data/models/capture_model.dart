@@ -45,6 +45,7 @@ class PhotoEntry {
 
 @JsonSerializable(explicitToJson: true)
 class CaptureModel {
+  bool shouldRetain;
   int? id;
   String? description;
   List<PhotoEntry> photos;
@@ -58,6 +59,7 @@ class CaptureModel {
   DateTime? timestamp;
 
   CaptureModel({
+    this.shouldRetain = false,
     this.id, 
     this.description, 
     required this.photos,
@@ -68,6 +70,7 @@ class CaptureModel {
   });
 
   CaptureModel copyWith({
+    bool? shouldRetain,
     int? id,
     String? description,
     List<PhotoEntry>? photos,
@@ -78,6 +81,7 @@ class CaptureModel {
     DateTime? timestamp,
   }) {
     return CaptureModel(
+      shouldRetain: shouldRetain ?? this.shouldRetain,
       id: id ?? this.id,
       description: description ?? this.description,
       photos: photos ?? this.photos,

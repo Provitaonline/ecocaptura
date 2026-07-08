@@ -57,6 +57,7 @@ Map<String, dynamic> _$PhotoEntryToJson(PhotoEntry instance) =>
     };
 
 CaptureModel _$CaptureModelFromJson(Map<String, dynamic> json) => CaptureModel(
+  shouldRetain: json['shouldRetain'] as bool? ?? false,
   id: (json['id'] as num?)?.toInt(),
   description: json['description'] as String?,
   photos: (json['photos'] as List<dynamic>)
@@ -72,6 +73,7 @@ CaptureModel _$CaptureModelFromJson(Map<String, dynamic> json) => CaptureModel(
 
 Map<String, dynamic> _$CaptureModelToJson(CaptureModel instance) =>
     <String, dynamic>{
+      'shouldRetain': instance.shouldRetain,
       'id': instance.id,
       'description': instance.description,
       'photos': instance.photos.map((e) => e.toJson()).toList(),
