@@ -155,11 +155,10 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
     if (_controller == null || !_controller!.value.isInitialized) return;
     
     try {
-      // 1. Capture the telemetry BEFORE the async operation begins
       final currentFrame = _telemetryNotifier.value;
-      
-      // 2. Now perform the I/O operation
+      final double zoomLevel = _currentZoomLevel;
       final XFile photoFile = await _controller!.takePicture();
+      final double fov = 75.0 / zoomLevel;
 
       // 3. Use the captured data
       final entry = PhotoEntry(
@@ -167,6 +166,8 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
         heading: currentFrame.heading,
         tiltY: currentFrame.tilt,
         roll: currentFrame.roll,
+        fov: fov,
+        zoomLevel: zoomLevel,
         rawSensors: _lastRawTelemetry,
         gpsCoordinates: currentFrame.position != null 
           ? "${currentFrame.position!.latitude},${currentFrame.position!.longitude}" 
