@@ -10,12 +10,14 @@ import '../../features/dashboard/data/models/capture_model.dart';
 class TelemetryFrame {
   final double heading;
   final double tilt;
+  final double roll;
   final RawTelemetry? rawTelemetry;
   final Position? position;
 
   TelemetryFrame({
     required this.heading,
     required this.tilt,
+    required this.roll,
     this.rawTelemetry,
     this.position,
   });
@@ -100,6 +102,7 @@ class TelemetryService {
           return TelemetryFrame(
             heading: headingDegrees,
             tilt: euler.pitch * (180.0 / math.pi),
+            roll: euler.roll * (180.0 / math.pi),
             rawTelemetry: RawTelemetry(
               accX: _accX, accY: _accY, accZ: _accZ,
               gyroX: _gyroX, gyroY: _gyroY, gyroZ: _gyroZ,

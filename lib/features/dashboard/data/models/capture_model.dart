@@ -31,13 +31,14 @@ class PhotoEntry {
   String? description;
   double? heading;
   double? tiltY;
+  double? roll;
   RawTelemetry? rawSensors;
   String? gpsCoordinates;
   double? gpsAccuracy;
   double? gpsAltitude;
   DateTime? timestamp;
 
-  PhotoEntry({this.id, this.imagePath, this.description, this.heading, this.tiltY, this.rawSensors, this.gpsCoordinates, this.gpsAccuracy, this.gpsAltitude, this.timestamp});
+  PhotoEntry({this.id, this.imagePath, this.description, this.heading, this.tiltY, this.roll, this.rawSensors, this.gpsCoordinates, this.gpsAccuracy, this.gpsAltitude, this.timestamp});
 
   factory PhotoEntry.fromJson(Map<String, dynamic> json) => _$PhotoEntryFromJson(json);
   Map<String, dynamic> toJson() => _$PhotoEntryToJson(this);

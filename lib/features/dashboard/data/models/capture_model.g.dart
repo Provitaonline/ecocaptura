@@ -31,6 +31,7 @@ PhotoEntry _$PhotoEntryFromJson(Map<String, dynamic> json) => PhotoEntry(
   description: json['description'] as String?,
   heading: (json['heading'] as num?)?.toDouble(),
   tiltY: (json['tiltY'] as num?)?.toDouble(),
+  roll: (json['roll'] as num?)?.toDouble(),
   rawSensors: json['rawSensors'] == null
       ? null
       : RawTelemetry.fromJson(json['rawSensors'] as Map<String, dynamic>),
@@ -49,6 +50,7 @@ Map<String, dynamic> _$PhotoEntryToJson(PhotoEntry instance) =>
       'description': instance.description,
       'heading': instance.heading,
       'tiltY': instance.tiltY,
+      'roll': instance.roll,
       'rawSensors': instance.rawSensors?.toJson(),
       'gpsCoordinates': instance.gpsCoordinates,
       'gpsAccuracy': instance.gpsAccuracy,

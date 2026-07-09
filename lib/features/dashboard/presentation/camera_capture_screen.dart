@@ -27,7 +27,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
   RawTelemetry? _lastRawTelemetry;
   
   final ValueNotifier<TelemetryFrame> _telemetryNotifier = ValueNotifier(
-    TelemetryFrame(heading: 0.0, tilt: 0.0),
+    TelemetryFrame(heading: 0.0, tilt: 0.0, roll: 0.0),
   );
 
   double _currentZoomLevel = 1.0;
@@ -166,6 +166,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
         imagePath: photoFile.path,
         heading: currentFrame.heading,
         tiltY: currentFrame.tilt,
+        roll: currentFrame.roll,
         rawSensors: _lastRawTelemetry,
         gpsCoordinates: currentFrame.position != null 
           ? "${currentFrame.position!.latitude},${currentFrame.position!.longitude}" 
