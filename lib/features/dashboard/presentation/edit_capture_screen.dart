@@ -8,6 +8,8 @@ import './widgets/full_screen_photo_view.dart';
 import '../../../core/constants/app_constants.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
+// import 'dart:convert';
+
 class CaptureEditorScreen extends StatefulWidget {
   final CaptureController controller;
   final CaptureModel? existingCapture;
@@ -83,16 +85,19 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
   }
 
   void _finishCapture() {
+    // 1. Define the variable in the outer scope
+    final CaptureModel captureToSave;
+
     if (isEditing) {
-      final updatedCapture = widget.existingCapture!.copyWith(
+      captureToSave = widget.existingCapture!.copyWith(
         description: _descController.text,
         photos: _photoEntries,
         qualityScore: _selectedQuality,
         qualityReason: _selectedReason,
       );
-      widget.controller.updateCapture(updatedCapture);
+      widget.controller.updateCapture(captureToSave);
     } else {
-      final newCapture = CaptureModel(
+      captureToSave = CaptureModel(
         id: DateTime.now().millisecondsSinceEpoch.remainder(1000000),
         description: _descController.text,
         photos: _photoEntries,
@@ -101,8 +106,16 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
         status: CaptureStatus.inProgress,
         timestamp: DateTime.now(),
       );
-      widget.controller.addCapture(newCapture);
+      widget.controller.addCapture(captureToSave);
     }
+
+    /* For debugging
+    const encoder =  JsonEncoder.withIndent('  ');
+    debugPrint('--- SAVING CAPTURE DATA ---');
+    debugPrint(encoder.convert(captureToSave.toJson())); 
+    debugPrint('---------------------------');
+    */
+
     if (mounted) Navigator.pop(context);
   }
 
