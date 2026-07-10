@@ -6,3 +6,8 @@ class QualityReasons {
 
   static const List<String> all = [poorGps, blurry, obstructed, other];
 }
+
+class AppInfo {
+  static const String orgName = "Provita";
+  static const String supportEmail = "support@wexample.com";
+}

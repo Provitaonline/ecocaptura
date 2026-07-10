@@ -136,4 +136,16 @@ class AppLocalizationsEs extends AppLocalizations {
     );
     return 'Exportación de la captura $captureId que contiene $_temp0.';
   }
+
+  @override
+  String aboutAppVersion(Object version) {
+    return 'Versión $version';
+  }
+
+  @override
+  String get aboutDescription =>
+      'EcoCaptura es una herramienta de recolección de evidencia fotográfica para el análisis de ecosistemas.';
+
+  @override
+  String get aboutContactLabel => 'Contacta a nuestro equipo de soporte:';
 }

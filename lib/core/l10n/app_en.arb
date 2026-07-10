@@ -49,5 +49,8 @@
         "type": "int"
       }
     }
-  }
+  },
+  "aboutAppVersion": "Version {version}",
+  "aboutDescription": "EcoCaptura is a field data collection tool to capture photographic evidence for ecosystem analysis.",
+  "aboutContactLabel": "Contact our support team:"
 }

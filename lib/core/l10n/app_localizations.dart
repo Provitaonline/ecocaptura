@@ -337,6 +337,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Export of Capture {captureId} containing {count, plural, =1 {1 photo} other {{count} photos}}.'**
   String exportCaptureMessage(int captureId, int count);
+
+  /// No description provided for @aboutAppVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String aboutAppVersion(Object version);
+
+  /// No description provided for @aboutDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'EcoCaptura is a field data collection tool to capture photographic evidence for ecosystem analysis.'**
+  String get aboutDescription;
+
+  /// No description provided for @aboutContactLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact our support team:'**
+  String get aboutContactLabel;
 }
 
 class _AppLocalizationsDelegate

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/extensions/content_extensions.dart';
 import '../../../../core/l10n/locale_controller.dart';
 import '../../../../core/services/preferences_service.dart';
+import '../widgets/about_page.dart';
 
 class DashboardDrawer extends StatelessWidget {
 
@@ -66,9 +67,11 @@ class DashboardDrawer extends StatelessWidget {
             leading: const Icon(Icons.info_outline),
             title: Text(context.i18n.menuAbout),
             onTap: () {
-              Navigator.pop(context); // Close drawer
-              // TODO: Show application credits
-            },
+              Navigator.pop(context);
+              Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const AboutPage()),
+                  );
+              },
           ),
         ],
       ),
