@@ -325,6 +325,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Capture info'**
   String get captureInfo;
+
+  /// No description provided for @captureDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture deleted'**
+  String get captureDeleted;
+
+  /// No description provided for @exportCaptureMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Export of Capture {captureId} containing {count, plural, =1 {1 photo} other {{count} photos}}.'**
+  String exportCaptureMessage(int captureId, int count);
 }
 
 class _AppLocalizationsDelegate

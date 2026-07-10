@@ -37,5 +37,16 @@
   "discardChangesMessage": "Se han hecho cambios. ¿Descartar?",
   "keepEditing": "Continuar",
   "discard": "Descartar",
-  "captureInfo": "Información sobre la captura"
+  "captureInfo": "Información sobre la captura",
+  "captureDeleted": "Captura borrada",
+  "exportCaptureMessage": "Exportación de la captura {captureId} que contiene {count, plural, =1 {1 foto} other {{count} fotos}}.",  "@exportCaptureMessage": {
+    "placeholders": {
+      "captureId": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

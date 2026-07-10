@@ -12,6 +12,7 @@ import 'package:archive/archive_io.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart';
+import '../../../../core/l10n/app_localizations.dart'; 
 
 class CaptureList extends StatelessWidget {
   final CaptureController controller;
@@ -45,7 +46,7 @@ class CaptureList extends StatelessWidget {
                     onPressed: (context) {
                       controller.deleteCapture(item);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Capture deleted")),
+                        SnackBar(content: Text(context.i18n.captureDeleted)),
                       );
                     },
                     backgroundColor: Colors.red.shade700,
@@ -81,10 +82,25 @@ class CaptureList extends StatelessWidget {
                   final fullCapture = await StorageManager().loadCapture(id);
 
                   if (fullCapture != null) {
-                    await _exportCapture(fullCapture);
+                    final (zipPath, count) = await _createZip(fullCapture);
+
+                    if (!context.mounted) return;
+                    
+                    final l10n = AppLocalizations.of(context)!;
+                    final shareText = l10n.exportCaptureMessage(id, count);
+                    
+                    await SharePlus.instance.share(
+                      ShareParams(
+                        files: [XFile(zipPath)],
+                        text: shareText,
+                      ),
+                    );
+
+                    await File(zipPath).delete();
                   } else {
-                    debugPrint("Failed to load full capture data for ID: $id");
+                    debugPrint("Error: Could not load capture for export.");
                   }
+                
                 },
                 child: Card(
                   margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -186,7 +202,11 @@ Widget _getStatusIcon(CaptureStatus status) {
   );
 }
 
-Future<void> _exportCapture(CaptureModel capture) async {
+Future<(String zipPath, int filesCount)> _createZip(CaptureModel capture) async {
+  final tempDir = await getTemporaryDirectory();
+  final zipFilePath = '${tempDir.path}/capture_${capture.id}.zip';
+  int filesAdded = 0;
+  
   try {
     final tempDir = await getTemporaryDirectory();
     final zipFilePath = '${tempDir.path}/capture_${capture.id}.zip';
@@ -219,7 +239,7 @@ Future<void> _exportCapture(CaptureModel capture) async {
     );
 
     // Add images directly from their original source paths
-    int filesAdded = 0;
+  
     for (var photo in capture.photos) {
       if (photo.imagePath == null) continue;
       
@@ -239,26 +259,13 @@ Future<void> _exportCapture(CaptureModel capture) async {
     
     encoder.close();
 
-    // Verify and share
     final zipFile = File(zipFilePath);
     if (await zipFile.exists() && await zipFile.length() > 0) {
       debugPrint('Export complete: ${zipFile.path} (${await zipFile.length()} bytes)');
-      
-      await SharePlus.instance.share(
-        ShareParams(
-          files: [XFile(zipFilePath)],
-          text: 'Export of Capture ${capture.id} containing $filesAdded photos.',
-        ),
-      );
-
-      await zipFile.delete();
-      debugPrint('Temporary zip file deleted: ${zipFile.path}');
-
-    } else {
-      debugPrint('Error: Final ZIP file is empty or missing.');
-    }
-    
+    } 
   } catch (e) {
     debugPrint('Export failed: $e');
   }
+  
+  return (zipFilePath, filesAdded);
 }

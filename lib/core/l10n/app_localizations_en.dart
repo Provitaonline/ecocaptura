@@ -123,4 +123,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get captureInfo => 'Capture info';
+
+  @override
+  String get captureDeleted => 'Capture deleted';
+
+  @override
+  String exportCaptureMessage(int captureId, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count photos',
+      one: '1 photo',
+    );
+    return 'Export of Capture $captureId containing $_temp0.';
+  }
 }

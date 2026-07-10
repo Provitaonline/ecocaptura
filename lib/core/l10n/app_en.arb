@@ -37,5 +37,17 @@
   "discardChangesMessage": "You have unsaved changes. Are you sure you want to leave?",
   "keepEditing": "Keep editing",
   "discard": "Discard",
-  "captureInfo": "Capture info"
+  "captureInfo": "Capture info",
+  "captureDeleted": "Capture deleted",
+  "exportCaptureMessage": "Export of Capture {captureId} containing {count, plural, =1 {1 photo} other {{count} photos}}.",
+  "@exportCaptureMessage": {
+    "placeholders": {
+      "captureId": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }
