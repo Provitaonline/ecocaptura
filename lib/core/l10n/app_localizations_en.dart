@@ -21,7 +21,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuPairDevice => 'Pair Device to Site';
 
   @override
-  String get menuPairSubtitle => 'Scan web QR authentication token';
+  String get menuPairSubtitle => 'Scan QR code (coming soon)';
 
   @override
   String get menuLanguage => 'Change Language';

@@ -9,5 +9,5 @@ class QualityReasons {
 
 class AppInfo {
   static const String orgName = "Provita";
-  static const String supportEmail = "support@wexample.com";
+  static const String supportEmail = "rikitraki@gmail.com";
 }

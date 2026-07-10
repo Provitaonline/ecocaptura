@@ -125,7 +125,7 @@ abstract class AppLocalizations {
   /// No description provided for @menuPairSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Scan web QR authentication token'**
+  /// **'Scan QR code (coming soon)'**
   String get menuPairSubtitle;
 
   /// No description provided for @menuLanguage.

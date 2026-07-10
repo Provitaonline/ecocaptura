@@ -60,7 +60,7 @@ class _AboutPageState extends State<AboutPage> {
             Text(l10n.aboutContactLabel),
             TextButton(
               onPressed: () => _launchSupportEmail(AppInfo.supportEmail), 
-              child: const Text('support@yourorg.com'),
+              child: const Text(AppInfo.supportEmail),
             ),
             const SizedBox(height: 10),
             Image.asset(

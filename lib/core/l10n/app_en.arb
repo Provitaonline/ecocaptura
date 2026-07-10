@@ -4,7 +4,7 @@
   "drawerHeader": "ecocaptura Settings",
   "drawerSubtitle": "Device Configuration Options",
   "menuPairDevice": "Pair Device to Site",
-  "menuPairSubtitle": "Scan web QR authentication token",
+  "menuPairSubtitle": "Scan QR code (coming soon)",
   "menuLanguage": "Change Language",
   "menuLanguageSubtitle": "English / Español",
   "menuAbout": "About App",

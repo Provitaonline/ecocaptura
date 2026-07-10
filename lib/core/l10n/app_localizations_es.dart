@@ -21,7 +21,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get menuPairDevice => 'Vincular Dispositivo al Sitio';
 
   @override
-  String get menuPairSubtitle => 'Escanear token de autenticación QR';
+  String get menuPairSubtitle => 'Escanear código QR (viene pronto)';
 
   @override
   String get menuLanguage => 'Cambiar Idioma';
