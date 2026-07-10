@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'app.dart';
 import 'core/l10n/locale_controller.dart';
 import './core/services/preferences_service.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,5 +27,17 @@ void main() async {
     DeviceOrientation.landscapeRight,
   ]);
 
+  clearTempFiles();
+
   runApp(const EcocapturaApp());
+}
+
+Future<void> clearTempFiles() async {
+  final tempDir = await getTemporaryDirectory();
+  final files = await tempDir.list().toList();
+  for (final file in files) {
+    if (file.path.endsWith('.zip')) {
+      await file.delete();
+    }
+  }
 }

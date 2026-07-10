@@ -7,6 +7,11 @@ import '../../data/services/storage_manager.dart';
 import '../../data/models/capture_model.dart';
 import '../edit_capture_screen.dart';
 import '../../../../core/extensions/content_extensions.dart';
+import 'dart:convert';
+import 'package:archive/archive_io.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:flutter/services.dart';
 
 class CaptureList extends StatelessWidget {
   final CaptureController controller;
@@ -68,6 +73,17 @@ class CaptureList extends StatelessWidget {
                         ),
                       ),
                     );
+                  }
+                },
+                onLongPress: () async {
+                  HapticFeedback.lightImpact();
+                  final int id = item.id!;
+                  final fullCapture = await StorageManager().loadCapture(id);
+
+                  if (fullCapture != null) {
+                    await _exportCapture(fullCapture);
+                  } else {
+                    debugPrint("Failed to load full capture data for ID: $id");
                   }
                 },
                 child: Card(
@@ -168,4 +184,81 @@ Widget _getStatusIcon(CaptureStatus status) {
       CaptureStatus.error      => Colors.red,
     },
   );
+}
+
+Future<void> _exportCapture(CaptureModel capture) async {
+  try {
+    final tempDir = await getTemporaryDirectory();
+    final zipFilePath = '${tempDir.path}/capture_${capture.id}.zip';
+    
+    // Prepare JSON: Create a map copy, strip paths, and pretty-print
+    final Map<String, dynamic> jsonData = capture.toJson();
+    
+    if (jsonData.containsKey('photos') && jsonData['photos'] is List) {
+      for (var photo in jsonData['photos']) {
+        if (photo is Map && photo.containsKey('imagePath') && photo['imagePath'] != null) {
+          final String fullPath = photo['imagePath'];
+          // Extract only the filename (e.g., 'image_001.jpg')
+          photo['imagePath'] = fullPath.split(Platform.pathSeparator).last;
+        }
+      }
+    }
+
+    // Pretty format JSON with 2-space indentation
+    const encoderJson = JsonEncoder.withIndent('  ');
+    final jsonString = encoderJson.convert(jsonData);
+    final jsonBytes = utf8.encode(jsonString);
+
+    // Initialize the zip encoder
+    final encoder = ZipFileEncoder();
+    encoder.create(zipFilePath);
+
+    // Add the pretty-printed metadata.json
+    encoder.addArchiveFile(
+      ArchiveFile('metadata.json', jsonBytes.length, jsonBytes),
+    );
+
+    // Add images directly from their original source paths
+    int filesAdded = 0;
+    for (var photo in capture.photos) {
+      if (photo.imagePath == null) continue;
+      
+      final file = File(photo.imagePath!);
+      if (await file.exists()) {
+        final bytes = await file.readAsBytes();
+        final fileName = file.uri.pathSegments.last;
+        
+        // Add image bytes directly to the zip buffer
+        encoder.addArchiveFile(
+          ArchiveFile(fileName, bytes.length, bytes),
+        );
+        filesAdded++;
+        debugPrint('Added $fileName to archive.');
+      }
+    }
+    
+    encoder.close();
+
+    // Verify and share
+    final zipFile = File(zipFilePath);
+    if (await zipFile.exists() && await zipFile.length() > 0) {
+      debugPrint('Export complete: ${zipFile.path} (${await zipFile.length()} bytes)');
+      
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(zipFilePath)],
+          text: 'Export of Capture ${capture.id} containing $filesAdded photos.',
+        ),
+      );
+
+      await zipFile.delete();
+      debugPrint('Temporary zip file deleted: ${zipFile.path}');
+
+    } else {
+      debugPrint('Error: Final ZIP file is empty or missing.');
+    }
+    
+  } catch (e) {
+    debugPrint('Export failed: $e');
+  }
 }
