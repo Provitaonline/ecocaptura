@@ -172,7 +172,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                             itemCount: _photoEntries.length + 1,
                             itemBuilder: (context, index) {
                               if (index == _photoEntries.length) return _buildAddPhotoPlaceholder();
-                              return _buildPhotoThumbnail(_photoEntries[index], index, _photoEntries);
+                              return _buildPhotoThumbnail(index, _photoEntries);
                             },
                           ),
                         ),
@@ -219,7 +219,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
   }
 
   // --- Helper Methods ---
-  Widget _buildPhotoThumbnail(PhotoEntry photo, int index, List<PhotoEntry> photoEntries) {
+  Widget _buildPhotoThumbnail(int index, List<PhotoEntry> photoEntries) {
     return Container(
       width: 85,
       height: 85,
@@ -228,7 +228,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
         children: [
           GestureDetector(
             onTap: () {
-              if (photo.imagePath != null) {
+              if (photoEntries[index].imagePath != null) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -244,11 +244,11 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                 color: Colors.grey.shade300,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: photo.imagePath != null
+              child: photoEntries[index].imagePath != null
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Image.file(
-                        File(photo.imagePath!),
+                        File(photoEntries[index].imagePath!),
                         fit: BoxFit.cover,
                         width: 85,
                         height: 85,
