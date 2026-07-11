@@ -118,6 +118,7 @@ class CaptureList extends StatelessWidget {
                                   fit: BoxFit.cover,
                                   width: 85,
                                   height: 85,
+                                  cacheWidth: 170, 
                                   errorBuilder: (context, error, stackTrace) =>
                                       const Icon(Icons.broken_image, size: 85),
                                 )

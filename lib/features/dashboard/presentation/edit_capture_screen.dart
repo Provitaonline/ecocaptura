@@ -252,6 +252,9 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                         fit: BoxFit.cover,
                         width: 85,
                         height: 85,
+                        cacheWidth: 170,
+                        errorBuilder: (context, error, stackTrace) =>
+                          const Icon(Icons.broken_image, size: 85),
                       ),
                     )
                   : const Center(child: Icon(Icons.broken_image, color: Colors.grey)),
