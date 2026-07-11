@@ -107,7 +107,7 @@ class CaptureList extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         // Thumbnail Section
                         ClipRRect(
@@ -143,6 +143,11 @@ class CaptureList extends StatelessWidget {
                               const SizedBox(height: 4),
                               Text(
                                 DateFormat('yyyy-MM-dd HH:mm').format(item.timestamp!),
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                context.i18n.photosCount(item.photos.length), 
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                               const SizedBox(height: 4),
