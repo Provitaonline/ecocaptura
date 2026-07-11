@@ -20,8 +20,8 @@ A Flutter mobile application for photos-based ecological data collection.
 ```
 lib/
 ├── core/                  # Shared services and localization files
-│   ├── constants/
-│   ├── extensions/
+│   ├── constants/         # App constants, spacing, etc
+│   ├── extensions/        # Localization extensions
 │   ├── l10n/              # ARB dictionaries and manual localization controllers
 │   └── services/          # Preferences, device sensor and telemetry managers
 ├── features/              # Feature modules
