@@ -59,24 +59,13 @@ class StorageManager {
     await file.writeAsString(jsonString);
   }
 
-
-  // --- API BRIDGE: for current UI compatibility ---
-
-  // Replaces the old Map-based getIndex()
-  Future<List<Map<String, dynamic>>> getIndex() async {
-    final list = await loadAllCaptures();
-    return list.map((c) => c.toJson()).toList();
-  }
-
-  // Restored: Allows your existing code to keep calling addOrUpdateIndex()
-  Future<void> addOrUpdateIndex(CaptureModel model) async {
-    await saveCapture(model); // Redirects to your new, clean object-based save
-  }
-
-  // Restored: Allows your existing code to keep calling loadCapture()
+  // Retrieve single object
   Future<CaptureModel?> loadCapture(int id) async {
     final all = await loadAllCaptures();
-    return all.firstWhere((c) => c.id == id, orElse: () => null as dynamic);
+    
+    return all.cast<CaptureModel?>().firstWhere(
+      (c) => c?.id == id, 
+      orElse: () => null, 
+    );
   }
-  
 }
