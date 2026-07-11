@@ -6,17 +6,28 @@ A Flutter mobile application for photos-based ecological data collection.
 
 ## Features
 
-TBD
+### Features
+
+* **Offline Data Capture:** Captures and stores photos and metadata locally for remote field use.
+* **Structured Captures:** Supports grouping multiple photos under a single record, including quality ratings and descriptive metadata.
+* **Editable Drafts:** Captures remain editable until they are finalized and marked for cloud synchronization.
+* **Comprehensive Sensor Logging:** Every photo logs precise metadata, including location, elevation, heading, tilt, roll, field-of-view (FOV), and raw sensor readings.
+* **Data Export:** Packages photos and metadata into a single bundle for external sharing.
+* **Cloud Synchronization:** Supports structured uploads of all media and associated metadata to the cloud.
+* **Localization:** Fully localized with support for English and Spanish.
 
 ## Project Structure
 
 ```
 lib/
 ├── core/                  # Shared services and localization files
+│   ├── constants/
+│   ├── extensions/
 │   ├── l10n/              # ARB dictionaries and manual localization controllers
-│   └── services/          # Device sensor and telemetry managers
+│   └── services/          # Preferences, device sensor and telemetry managers
 ├── features/              # Feature modules
-│   └── dashboard/         # Main UI
+│   ├── data/              # data model and storage services
+│   └── presentation/      # UI
 └── utils/                 # Global helper classes, constants, and extensions
 ```
 
