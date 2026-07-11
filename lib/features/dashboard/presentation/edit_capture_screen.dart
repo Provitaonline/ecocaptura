@@ -85,7 +85,6 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
   }
 
   void _finishCapture() {
-    // 1. Define the variable in the outer scope
     final CaptureModel captureToSave;
 
     if (isEditing) {
@@ -173,7 +172,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                             itemCount: _photoEntries.length + 1,
                             itemBuilder: (context, index) {
                               if (index == _photoEntries.length) return _buildAddPhotoPlaceholder();
-                              return _buildPhotoThumbnail(_photoEntries[index], index);
+                              return _buildPhotoThumbnail(_photoEntries[index], index, _photoEntries);
                             },
                           ),
                         ),
@@ -220,21 +219,20 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
   }
 
   // --- Helper Methods ---
-  Widget _buildPhotoThumbnail(PhotoEntry photo, int index) {
+  Widget _buildPhotoThumbnail(PhotoEntry photo, int index, List<PhotoEntry> photoEntries) {
     return Container(
       width: 85,
       height: 85,
       margin: const EdgeInsets.only(right: 10),
       child: Stack(
         children: [
-          // 1. The Image - Now wrapped in a GestureDetector for full-screen view
           GestureDetector(
             onTap: () {
               if (photo.imagePath != null) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => FullScreenPhotoView(imagePath: photo.imagePath!),
+                    builder: (_) => FullScreenPhotoView(photoEntries: photoEntries, initialIndex: index),
                   ),
                 );
               }
@@ -260,14 +258,12 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
             ),
           ),
 
-          // 2. The Delete Button - Placed on top of the image in the Stack
           if (!widget.isReadOnly)
             Positioned(
               right: 0,
               top: 0,
               child: GestureDetector(
                 onTap: () async {
-                    // 1. Show the confirmation dialog
                     final bool? shouldDelete = await showDialog<bool>(
                       context: context,
                       builder: (context) => AlertDialog(
@@ -286,7 +282,6 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                       ),
                     );
 
-                    // 2. If the user clicked "Delete", perform the removal
                     if (shouldDelete == true) {
                       setState(() {
                         _photoEntries.removeAt(index);
@@ -379,7 +374,6 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
               border: const OutlineInputBorder(),
             ),
             items: QualityReasons.all.map((key) {
-              // Map each constant key to its localized label
               String label;
               switch (key) {
                 case QualityReasons.poorGps: label = context.i18n.reasonPoorGps; break;
