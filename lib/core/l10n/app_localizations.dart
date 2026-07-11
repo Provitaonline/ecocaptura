@@ -355,6 +355,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Contact our support team:'**
   String get aboutContactLabel;
+
+  /// No description provided for @photosCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No photos} =1{1 photo} other{{count} photos}}'**
+  String photosCount(num count);
 }
 
 class _AppLocalizationsDelegate

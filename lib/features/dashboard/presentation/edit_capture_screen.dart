@@ -163,7 +163,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(context.i18n.photos, style: Theme.of(context).textTheme.titleMedium),
+                        Text(context.i18n.photosCount(_photoEntries.length), style: Theme.of(context).textTheme.titleMedium),
                         const SizedBox(height: 10),
                         SizedBox(
                           height: 85,

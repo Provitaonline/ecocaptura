@@ -149,4 +149,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutContactLabel => 'Contact our support team:';
+
+  @override
+  String photosCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count photos',
+      one: '1 photo',
+      zero: 'No photos',
+    );
+    return '$_temp0';
+  }
 }
