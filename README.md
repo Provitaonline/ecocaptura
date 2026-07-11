@@ -6,8 +6,6 @@ A Flutter mobile application for photos-based ecological data collection.
 
 ## Features
 
-### Features
-
 * **Offline Data Capture:** Captures and stores photos and metadata locally for remote field use.
 * **Structured Captures:** Supports grouping multiple photos under a single record, including quality ratings and descriptive metadata.
 * **Editable Drafts:** Captures remain editable until they are finalized and marked for cloud synchronization.
