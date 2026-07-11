@@ -13,6 +13,7 @@ A Flutter mobile application for photos-based ecological data collection.
 * **Data Export:** Packages photos and metadata into a single bundle for external sharing.
 * **Cloud Synchronization:** Supports structured uploads of all media and associated metadata to the cloud.
 * **Localization:** Fully localized with support for English and Spanish.
+* **Mobile Targets:** Android 7+ first, then iOS
 
 ## Project Structure
 
