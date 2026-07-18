@@ -35,15 +35,6 @@ class DashboardDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.qr_code_scanner),
-            title: Text(context.i18n.menuPairDevice),
-            subtitle: Text(context.i18n.menuPairSubtitle),
-            onTap: () {
-              Navigator.pop(context); // Close drawer
-              // TODO: Route to QR scanning pipeline
-            },
-          ),
-          ListTile(
             leading: const Icon(Icons.language),
             title: Text(context.i18n.menuLanguage),
             subtitle: Text(
