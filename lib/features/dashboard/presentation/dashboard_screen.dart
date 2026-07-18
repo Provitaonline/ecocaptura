@@ -4,6 +4,7 @@ import 'controllers/capture_controller.dart';
 import 'edit_capture_screen.dart';
 import 'widgets/dashboard_drawer.dart';
 import 'widgets/capture_list.dart';
+import 'widgets/sync_button.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -47,7 +48,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(context.i18n.recentCaptures, style: Theme.of(context).textTheme.titleLarge),
+            const SyncButton(),
+            //Text(context.i18n.recentCaptures, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 10),
             Expanded(
               child: CaptureList(controller: _captureController),

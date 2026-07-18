@@ -51,7 +51,23 @@
     }
   },
   "aboutAppVersion": "Version {version}",
+  "@aboutAppVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
   "aboutDescription": "EcoCaptura is a field data collection tool to capture photographic evidence for ecosystem analysis.",
   "aboutContactLabel": "Contact our support team:",
-  "photosCount": "{count, plural, =0{No photos} =1{1 photo} other{{count} photos}}"
+  "photosCount": "{count, plural, =0{No photos} =1{1 photo} other{{count} photos}}",
+  "@photosCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sync": "Sync Captures",
+  "connectToSync": "Connect to Wi-Fi to Sync"
 }

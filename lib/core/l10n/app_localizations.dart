@@ -342,7 +342,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Version {version}'**
-  String aboutAppVersion(Object version);
+  String aboutAppVersion(String version);
 
   /// No description provided for @aboutDescription.
   ///
@@ -360,7 +360,19 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =0{No photos} =1{1 photo} other{{count} photos}}'**
-  String photosCount(num count);
+  String photosCount(int count);
+
+  /// No description provided for @sync.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Captures'**
+  String get sync;
+
+  /// No description provided for @connectToSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect to Wi-Fi to Sync'**
+  String get connectToSync;
 }
 
 class _AppLocalizationsDelegate

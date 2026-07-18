@@ -52,5 +52,7 @@
   "aboutAppVersion": "Versión {version}",
   "aboutDescription": "EcoCaptura es una herramienta de recolección de evidencia fotográfica para el análisis de ecosistemas.",
   "aboutContactLabel": "Contacta a nuestro equipo de soporte:",
-  "photosCount": "{count, plural, =0{No hay fotos} =1{1 foto} other{{count} fotos}}"
+  "photosCount": "{count, plural, =0{No hay fotos} =1{1 foto} other{{count} fotos}}",
+  "sync": "Subir capturas",
+  "connectToSync": "Conectar a Wi-Fi para subir"
 }

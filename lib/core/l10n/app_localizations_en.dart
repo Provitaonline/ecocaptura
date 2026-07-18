@@ -139,7 +139,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String aboutAppVersion(Object version) {
+  String aboutAppVersion(String version) {
     return 'Version $version';
   }
 
@@ -151,7 +151,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutContactLabel => 'Contact our support team:';
 
   @override
-  String photosCount(num count) {
+  String photosCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
@@ -161,4 +161,10 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get sync => 'Sync Captures';
+
+  @override
+  String get connectToSync => 'Connect to Wi-Fi to Sync';
 }
