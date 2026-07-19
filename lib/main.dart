@@ -5,6 +5,7 @@ import 'app.dart';
 import 'core/l10n/locale_controller.dart';
 import './core/services/preferences_service.dart';
 import 'package:path_provider/path_provider.dart';
+import 'core/services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +29,8 @@ void main() async {
   ]);
 
   clearTempFiles();
+
+  await AuthService.instance.init();
 
   runApp(const EcocapturaApp());
 }

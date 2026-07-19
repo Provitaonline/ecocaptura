@@ -3,9 +3,9 @@ import '../../../../core/extensions/content_extensions.dart';
 import '../../../../core/l10n/locale_controller.dart';
 import '../../../../core/services/preferences_service.dart';
 import '../widgets/about_page.dart';
+import '../../../../core/services/auth_service.dart';
 
 class DashboardDrawer extends StatelessWidget {
-
   const DashboardDrawer({super.key});
 
   @override
@@ -15,9 +15,7 @@ class DashboardDrawer extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           DrawerHeader(
-            decoration: BoxDecoration(
-              color: Colors.teal.shade800,
-            ),
+            decoration: BoxDecoration(color: Colors.teal.shade800),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
@@ -34,35 +32,51 @@ class DashboardDrawer extends StatelessWidget {
               ],
             ),
           ),
+          
+          ValueListenableBuilder<bool>(
+            valueListenable: AuthService.instance.isAuthenticatedNotifier,
+            builder: (context, isAuth, _) {
+              if (!isAuth) return const SizedBox.shrink();
+
+              return Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.logout, color: Colors.red),
+                    title: const Text("Disconnect Account", style: TextStyle(color: Colors.red)),
+                    onTap: () async {
+                      await AuthService.instance.logout();
+                      Navigator.pop(context);
+                    },
+                  ),
+                  const Divider(),
+                ],
+              );
+            },
+          ),
+
           ListTile(
             leading: const Icon(Icons.language),
             title: Text(context.i18n.menuLanguage),
             subtitle: Text(
-              Localizations.localeOf(context).languageCode == 'es'
-                  ? 'English'
-                  : 'Español',
+              Localizations.localeOf(context).languageCode == 'es' ? 'English' : 'Español',
             ),
             onTap: () async {
-              Navigator.pop(context); 
-              
+              Navigator.pop(context);
               final currentLanguage = Localizations.localeOf(context).languageCode;
               final newLocale = Locale(currentLanguage == 'es' ? 'en' : 'es');
-
               LocaleController.instance.setLocale(newLocale);
-              
               await PreferencesService().setLanguage(newLocale.languageCode);
             },
           ),
-          const Divider(),
           ListTile(
             leading: const Icon(Icons.info_outline),
             title: Text(context.i18n.menuAbout),
             onTap: () {
               Navigator.pop(context);
               Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const AboutPage()),
-                  );
-              },
+                MaterialPageRoute(builder: (context) => const AboutPage()),
+              );
+            },
           ),
         ],
       ),
