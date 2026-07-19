@@ -52,10 +52,10 @@ class AuthService {
 
   String? _cachedIdToken;
 
-  Future<AuthResult> loginWithGoogle({String? username, String? existingIdToken}) async {
+  Future<AuthResult> loginWithGoogle({String? username}) async {
     try {
       // 1. Prioritize existingIdToken (passed from UI), then our cache, then fetch new.
-      final String? idToken = existingIdToken ?? _cachedIdToken ?? await getGoogleIdToken();
+      final String? idToken = _cachedIdToken ?? await getGoogleIdToken();
       
       if (idToken == null) return AuthResult.cancelled;
       
