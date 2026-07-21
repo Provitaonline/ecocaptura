@@ -43,7 +43,7 @@
   "@exportCaptureMessage": {
     "placeholders": {
       "captureId": {
-        "type": "int"
+        "type": "String"
       },
       "count": {
         "type": "int"

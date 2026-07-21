@@ -38,16 +38,24 @@ class StorageManager {
   }
 
   // Delete Object
-  Future<void> deleteCapture(int id) async {
+  Future<void> deleteCapture(String id) async {
     final allCaptures = await loadAllCaptures();
-    final target = allCaptures.firstWhere((c) => c.id == id, orElse: () => null as dynamic);
     
-    // Physical cleanup
+    // Find the target safely
+    final target = allCaptures.where((c) => c.id == id).firstOrNull;
+    if (target == null) return; // Exit early if it doesn't exist
+    
+    // Physical file cleanup for associated photos
     for (var photo in target.photos) {
-      final imageFile = File(photo.imagePath ?? '');
-      if (await imageFile.exists()) await imageFile.delete();
+      if (photo.imagePath != null && photo.imagePath!.isNotEmpty) {
+        final imageFile = File(photo.imagePath!);
+        if (await imageFile.exists()) {
+          await imageFile.delete();
+        }
+      }
     }
     
+    // Remove from list and persist
     allCaptures.removeWhere((c) => c.id == id);
     await _saveAll(allCaptures);
   }
@@ -60,12 +68,13 @@ class StorageManager {
   }
 
   // Retrieve single object
-  Future<CaptureModel?> loadCapture(int id) async {
+  Future<CaptureModel?> loadCapture(String id) async {
     final all = await loadAllCaptures();
     
-    return all.cast<CaptureModel?>().firstWhere(
-      (c) => c?.id == id, 
-      orElse: () => null, 
-    );
+    try {
+      return all.firstWhere((c) => c.id == id);
+    } catch (_) {
+      return null; // catches StateError if not found
+    }
   }
 }

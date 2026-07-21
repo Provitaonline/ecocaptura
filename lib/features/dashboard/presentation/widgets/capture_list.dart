@@ -59,7 +59,7 @@ class CaptureList extends StatelessWidget {
               // Full-card tap interaction
               child: InkWell(
                 onTap: () async {
-                  final int id = item.id!;
+                  final String id = item.id!;
                   final fullCapture = await StorageManager().loadCapture(id);
                   
                   if (fullCapture != null && context.mounted) {
@@ -78,7 +78,7 @@ class CaptureList extends StatelessWidget {
                 },
                 onLongPress: () async {
                   HapticFeedback.lightImpact();
-                  final int id = item.id!;
+                  final String id = item.id!;
                   final fullCapture = await StorageManager().loadCapture(id);
 
                   if (fullCapture != null) {

@@ -97,7 +97,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
       widget.controller.updateCapture(captureToSave);
     } else {
       captureToSave = CaptureModel(
-        id: DateTime.now().millisecondsSinceEpoch.remainder(1000000),
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
         description: _descController.text,
         photos: _photoEntries,
         qualityScore: _selectedQuality, 

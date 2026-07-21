@@ -38,9 +38,25 @@ class PhotoEntry {
   String? gpsCoordinates;
   double? gpsAccuracy;
   double? gpsAltitude;
+  
+  @JsonKey(fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)
   DateTime? timestamp;
 
-  PhotoEntry({this.id, this.imagePath, this.description, this.heading, this.tiltY, this.roll, this.fov, this.zoomLevel, this.rawSensors, this.gpsCoordinates, this.gpsAccuracy, this.gpsAltitude, this.timestamp});
+  PhotoEntry({
+    this.id, 
+    this.imagePath, 
+    this.description, 
+    this.heading, 
+    this.tiltY, 
+    this.roll, 
+    this.fov, 
+    this.zoomLevel, 
+    this.rawSensors, 
+    this.gpsCoordinates, 
+    this.gpsAccuracy, 
+    this.gpsAltitude, 
+    this.timestamp
+  });
 
   factory PhotoEntry.fromJson(Map<String, dynamic> json) => _$PhotoEntryFromJson(json);
   Map<String, dynamic> toJson() => _$PhotoEntryToJson(this);
@@ -49,7 +65,7 @@ class PhotoEntry {
 @JsonSerializable(explicitToJson: true)
 class CaptureModel {
   bool shouldRetain;
-  int? id;
+  String? id;
   String? description;
   List<PhotoEntry> photos;
 
@@ -59,6 +75,7 @@ class CaptureModel {
   @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)
   CaptureStatus status;
   
+  @JsonKey(fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)
   DateTime? timestamp;
 
   CaptureModel({
@@ -74,13 +91,12 @@ class CaptureModel {
 
   CaptureModel copyWith({
     bool? shouldRetain,
-    int? id,
+    String? id,
     String? description,
     List<PhotoEntry>? photos,
     CaptureStatus? status,
     int? qualityScore,
     String? qualityReason,
-    @JsonKey(fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)
     DateTime? timestamp,
   }) {
     return CaptureModel(
@@ -100,7 +116,13 @@ class CaptureModel {
 }
 
 // Helpers for the JSON converter
-DateTime? _dateTimeFromJson(String? date) => date != null ? DateTime.tryParse(date) : null;
+DateTime? _dateTimeFromJson(dynamic value) {
+  if (value == null) return null;
+  if (value is String) return DateTime.tryParse(value);
+  if (value is int) return DateTime.fromMillisecondsSinceEpoch(value);
+  return null;
+}
+
 String? _dateTimeToJson(DateTime? date) => date?.toIso8601String();
 
 CaptureStatus _statusFromJson(int index) => CaptureStatus.values[index];

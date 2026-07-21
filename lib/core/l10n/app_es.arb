@@ -42,7 +42,7 @@
   "exportCaptureMessage": "Exportación de la captura {captureId} que contiene {count, plural, =1 {1 foto} other {{count} fotos}}.",  "@exportCaptureMessage": {
     "placeholders": {
       "captureId": {
-        "type": "int"
+        "type": "String"
       },
       "count": {
         "type": "int"

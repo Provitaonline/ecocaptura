@@ -40,9 +40,7 @@ PhotoEntry _$PhotoEntryFromJson(Map<String, dynamic> json) => PhotoEntry(
   gpsCoordinates: json['gpsCoordinates'] as String?,
   gpsAccuracy: (json['gpsAccuracy'] as num?)?.toDouble(),
   gpsAltitude: (json['gpsAltitude'] as num?)?.toDouble(),
-  timestamp: json['timestamp'] == null
-      ? null
-      : DateTime.parse(json['timestamp'] as String),
+  timestamp: _dateTimeFromJson(json['timestamp']),
 );
 
 Map<String, dynamic> _$PhotoEntryToJson(PhotoEntry instance) =>
@@ -59,12 +57,12 @@ Map<String, dynamic> _$PhotoEntryToJson(PhotoEntry instance) =>
       'gpsCoordinates': instance.gpsCoordinates,
       'gpsAccuracy': instance.gpsAccuracy,
       'gpsAltitude': instance.gpsAltitude,
-      'timestamp': instance.timestamp?.toIso8601String(),
+      'timestamp': _dateTimeToJson(instance.timestamp),
     };
 
 CaptureModel _$CaptureModelFromJson(Map<String, dynamic> json) => CaptureModel(
   shouldRetain: json['shouldRetain'] as bool? ?? false,
-  id: (json['id'] as num?)?.toInt(),
+  id: json['id'] as String?,
   description: json['description'] as String?,
   photos: (json['photos'] as List<dynamic>)
       .map((e) => PhotoEntry.fromJson(e as Map<String, dynamic>))
@@ -72,9 +70,7 @@ CaptureModel _$CaptureModelFromJson(Map<String, dynamic> json) => CaptureModel(
   qualityScore: (json['qualityScore'] as num?)?.toInt() ?? 3,
   qualityReason: json['qualityReason'] as String?,
   status: _statusFromJson((json['status'] as num).toInt()),
-  timestamp: json['timestamp'] == null
-      ? null
-      : DateTime.parse(json['timestamp'] as String),
+  timestamp: _dateTimeFromJson(json['timestamp']),
 );
 
 Map<String, dynamic> _$CaptureModelToJson(CaptureModel instance) =>
@@ -86,5 +82,5 @@ Map<String, dynamic> _$CaptureModelToJson(CaptureModel instance) =>
       'qualityScore': instance.qualityScore,
       'qualityReason': instance.qualityReason,
       'status': _statusToJson(instance.status),
-      'timestamp': instance.timestamp?.toIso8601String(),
+      'timestamp': _dateTimeToJson(instance.timestamp),
     };

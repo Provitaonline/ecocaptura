@@ -336,7 +336,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Export of Capture {captureId} containing {count, plural, =1 {1 photo} other {{count} photos}}.'**
-  String exportCaptureMessage(int captureId, int count);
+  String exportCaptureMessage(String captureId, int count);
 
   /// No description provided for @aboutAppVersion.
   ///

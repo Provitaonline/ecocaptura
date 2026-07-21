@@ -127,7 +127,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get captureDeleted => 'Captura borrada';
 
   @override
-  String exportCaptureMessage(int captureId, int count) {
+  String exportCaptureMessage(String captureId, int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
