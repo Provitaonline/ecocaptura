@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/extensions/content_extensions.dart';
+import 'package:ecocaptura/core/extensions/content_extensions.dart';
 import 'controllers/capture_controller.dart';
 import 'edit_capture_screen.dart';
 import 'widgets/dashboard_drawer.dart';

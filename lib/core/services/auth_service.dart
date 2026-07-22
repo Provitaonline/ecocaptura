@@ -1,6 +1,6 @@
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../../backend/user_api.dart';
+import 'package:ecocaptura/backend/user_api.dart';
 import '../constants/app_constants.dart';
 import 'package:flutter/foundation.dart';
 

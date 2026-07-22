@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_rotation_sensor/flutter_rotation_sensor.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:sensors_plus/sensors_plus.dart' hide SensorInterval;
-import '../../features/dashboard/data/models/capture_model.dart';
+import 'package:ecocaptura/features/dashboard/data/models/capture_model.dart';
 
 class TelemetryFrame {
   final double heading;

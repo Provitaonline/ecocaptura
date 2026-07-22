@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart'; 
-import '../../data/models/capture_model.dart'; 
+import 'package:ecocaptura/features/dashboard/data/models/capture_model.dart';
 
 class FullScreenPhotoView extends StatelessWidget {
   final List<PhotoEntry> photoEntries;

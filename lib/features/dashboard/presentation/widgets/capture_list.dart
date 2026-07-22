@@ -3,16 +3,16 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../controllers/capture_controller.dart';
-import '../../data/services/storage_manager.dart';
-import '../../data/models/capture_model.dart';
+import 'package:ecocaptura/features/dashboard/data/services/storage_manager.dart';
+import 'package:ecocaptura/features/dashboard/data/models/capture_model.dart';
 import '../edit_capture_screen.dart';
-import '../../../../core/extensions/content_extensions.dart';
+import 'package:ecocaptura/core/extensions/content_extensions.dart';
 import 'dart:convert';
 import 'package:archive/archive_io.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart';
-import '../../../../core/l10n/app_localizations.dart'; 
+import 'package:ecocaptura/core/l10n/app_localizations.dart';
 
 class CaptureList extends StatelessWidget {
   final CaptureController controller;

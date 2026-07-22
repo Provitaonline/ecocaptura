@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../../core/extensions/content_extensions.dart';
+import 'package:ecocaptura/core/extensions/content_extensions.dart';
 import '../data/models/capture_model.dart'; 
 import './controllers/capture_controller.dart';
 import 'camera_capture_screen.dart';
 import './widgets/full_screen_photo_view.dart';
-import '../../../core/constants/app_constants.dart';
+import 'package:ecocaptura/core/constants/app_constants.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class CaptureEditorScreen extends StatefulWidget {

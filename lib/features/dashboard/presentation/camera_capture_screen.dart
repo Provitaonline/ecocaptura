@@ -3,10 +3,10 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import '../../../core/constants/app_spacing.dart';
-import '../../../core/l10n/app_localizations.dart';
-import '../../../core/services/telemetry_service.dart';
-import '../../../utils/geo_utils.dart';
+import 'package:ecocaptura/core/constants/app_spacing.dart';
+import 'package:ecocaptura/core/l10n/app_localizations.dart';
+import 'package:ecocaptura/core/services/telemetry_service.dart';
+import 'package:ecocaptura/utils/geo_utils.dart';
 import '../data/models/capture_model.dart'; 
 
 class CameraCaptureScreen extends StatefulWidget {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../../core/extensions/content_extensions.dart';
-import '../../../../core/l10n/locale_controller.dart';
-import '../../../../core/services/preferences_service.dart';
+import 'package:ecocaptura/core/extensions/content_extensions.dart';
+import 'package:ecocaptura/core/l10n/locale_controller.dart';
+import 'package:ecocaptura/core/services/preferences_service.dart';
 import '../widgets/about_page.dart';
-import '../../../../core/services/auth_service.dart';
+import 'package:ecocaptura/core/services/auth_service.dart';
 
 class DashboardDrawer extends StatelessWidget {
   const DashboardDrawer({super.key});

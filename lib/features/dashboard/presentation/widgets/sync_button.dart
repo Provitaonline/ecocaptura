@@ -1,10 +1,10 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/services/auth_service.dart';
-import '../../../../core/extensions/content_extensions.dart';
+import 'package:ecocaptura/core/services/auth_service.dart';
+import 'package:ecocaptura/core/extensions/content_extensions.dart';
 import '../controllers/capture_controller.dart';
 import './registration_dialog.dart';
-import '../../data/models/capture_model.dart';
+import 'package:ecocaptura/features/dashboard/data/models/capture_model.dart';
 
 class SyncButton extends StatelessWidget {
   final CaptureController captureController;

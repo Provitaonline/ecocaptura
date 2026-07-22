@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import '.././../../../core/l10n/app_localizations.dart';
-import '../../../../core/constants/app_constants.dart';
+import 'package:ecocaptura/core/l10n/app_localizations.dart';
+import 'package:ecocaptura/core/constants/app_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/foundation.dart';
 
