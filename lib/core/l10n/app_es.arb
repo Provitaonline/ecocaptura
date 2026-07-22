@@ -39,21 +39,18 @@
   "discard": "Descartar",
   "captureInfo": "Información sobre la captura",
   "captureDeleted": "Captura borrada",
-  "exportCaptureMessage": "Exportación de la captura {captureId} que contiene {count, plural, =1 {1 foto} other {{count} fotos}}.",  "@exportCaptureMessage": {
-    "placeholders": {
-      "captureId": {
-        "type": "String"
-      },
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "exportCaptureMessage": "Exportación de la captura {captureId} que contiene {count, plural, =1 {1 foto} other {{count} fotos}}.",
   "aboutAppVersion": "Versión {version}",
   "aboutDescription": "EcoCaptura es una herramienta de recolección de evidencia fotográfica para el análisis de ecosistemas.",
   "aboutContactLabel": "Contacta a nuestro equipo de soporte:",
   "photosCount": "{count, plural, =0{No hay fotos} =1{1 foto} other{{count} fotos}}",
   "sync": "Subir capturas",
   "connectToSync": "Conectar a Wi-Fi para subir",
-  "retain": "No borrar"
+  "retain": "No borrar",
+  "register": "Regístrate...",
+  "chooseUsername": "Escoge un nombre de usuario único",
+  "username": "Nombre de usuario",
+  "usernameFormatLabel": "3-20 letras, numeros, y -, +, $, @, #",
+  "usernameEmpty": "No puede estar vacío",
+  "usernameLength": "Debe tener 3-20 caracteres"
 }

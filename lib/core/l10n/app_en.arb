@@ -70,5 +70,11 @@
   },
   "sync": "Sync Captures",
   "connectToSync": "Connect to Wi-Fi to Sync",
-  "retain": "Retain"
+  "retain": "Retain",
+  "register": "Register...",
+  "chooseUsername": "Choose a unique username to continue",
+  "username": "Username",
+  "usernameFormatLabel": "3-20 letters, numbers, and -, +, $, @, #",
+  "usernameEmpty": "Cannot be empty",
+  "usernameLength": "Must be 3-20 characters"
 }

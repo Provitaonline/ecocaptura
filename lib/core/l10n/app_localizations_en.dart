@@ -170,4 +170,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get retain => 'Retain';
+
+  @override
+  String get register => 'Register...';
+
+  @override
+  String get chooseUsername => 'Choose a unique username to continue';
+
+  @override
+  String get username => 'Username';
+
+  @override
+  String get usernameFormatLabel => '3-20 letters, numbers, and -, +, \$, @, #';
+
+  @override
+  String get usernameEmpty => 'Cannot be empty';
+
+  @override
+  String get usernameLength => 'Must be 3-20 characters';
 }

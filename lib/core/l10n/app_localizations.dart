@@ -379,6 +379,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retain'**
   String get retain;
+
+  /// No description provided for @register.
+  ///
+  /// In en, this message translates to:
+  /// **'Register...'**
+  String get register;
+
+  /// No description provided for @chooseUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a unique username to continue'**
+  String get chooseUsername;
+
+  /// No description provided for @username.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get username;
+
+  /// No description provided for @usernameFormatLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'3-20 letters, numbers, and -, +, \$, @, #'**
+  String get usernameFormatLabel;
+
+  /// No description provided for @usernameEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot be empty'**
+  String get usernameEmpty;
+
+  /// No description provided for @usernameLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Must be 3-20 characters'**
+  String get usernameLength;
 }
 
 class _AppLocalizationsDelegate

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ecocaptura/core/extensions/content_extensions.dart';
 
 class RegistrationDialog extends StatefulWidget {
   const RegistrationDialog({super.key});
@@ -24,16 +25,16 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Complete Registration'),
+      title: Text(context.i18n.register),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min, 
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Please choose a unique username to continue.'),
+            Text(context.i18n.chooseUsername),
             const SizedBox(height: 8),
-            const Text(
-              '3-20 characters. Letters, numbers, and -, +, \$, @, # allowed.',
+            Text(
+              context.i18n.usernameFormatLabel,
               style: TextStyle(fontSize: 12, color: Colors.grey),
             ),
             const SizedBox(height: 16),
@@ -44,7 +45,7 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
                 FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\-\+\$\@\#]')),
               ],
               decoration: InputDecoration(
-                labelText: 'Username',
+                labelText: context.i18n.username,
                 border: const OutlineInputBorder(),
                 errorText: _errorMessage,
                 counterText: '', 
@@ -62,11 +63,11 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(null),
-          child: const Text('Cancel'),
+          child: Text(context.i18n.cancel),
         ),
         ElevatedButton(
           onPressed: _handleConfirm,
-          child: const Text('Register'),
+          child: Text(context.i18n.register),
         ),
       ],
     );
@@ -76,12 +77,12 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
     final val = _usernameController.text.trim();
     
     if (val.isEmpty) {
-      setState(() => _errorMessage = 'Username cannot be empty');
+      setState(() => _errorMessage = context.i18n.usernameEmpty);
       return;
     }
 
     if (!_usernameRegex.hasMatch(val)) {
-      setState(() => _errorMessage = 'Username must be 3-20 characters long.');
+      setState(() => _errorMessage = context.i18n.usernameLength);
       return;
     }
 
