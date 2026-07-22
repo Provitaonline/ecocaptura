@@ -1,10 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:ecocaptura/features/dashboard/data/models/capture_model.dart';
 import 'package:ecocaptura/features/dashboard/data/services/storage_manager.dart';
+import 'package:ecocaptura/backend/capture_api.dart';
 
 class CaptureController extends ChangeNotifier {
   final StorageManager _storage = StorageManager();
-  List<CaptureModel> _captures = []; // Now stores Objects, not Maps
+  List<CaptureModel> _captures = []; 
+  
+  bool _isSyncing = false;
+  bool get isSyncing => _isSyncing;
 
   List<CaptureModel> get captures => _captures;
 
@@ -40,6 +44,36 @@ class CaptureController extends ChangeNotifier {
     } catch (e) {
       debugPrint("Error updating: $e");
       rethrow; 
+    }
+  }
+
+  /// Fetches pending captures and handles the batch sync workflow with the backend.
+  Future<void> syncPendingCaptures() async {
+    if (_isSyncing) return;
+
+    _isSyncing = true;
+    notifyListeners();
+
+    try {
+      // 1. Fetch pending captures from local storage
+      final pendingCaptures = await _storage.getPendingCaptures();
+
+      if (pendingCaptures.isEmpty) {
+        debugPrint("No pending captures to sync.");
+        return;
+      }
+
+      // 2. Trigger batch upload via CaptureApi (assuming it handles current session username internally)
+      await CaptureApi.instance.uploadPendingCaptures(pendingCaptures, 'testuser');
+
+      // 3. Refresh local capture list to reflect any status updates or cleanups
+      await loadCaptures();
+    } catch (e) {
+      debugPrint("Error syncing pending captures: $e");
+      rethrow;
+    } finally {
+      _isSyncing = false;
+      notifyListeners();
     }
   }
 }

@@ -77,4 +77,10 @@ class StorageManager {
       return null; // catches StateError if not found
     }
   }
+
+  // Retrieves all captures that are ready to be uploaded
+  Future<List<CaptureModel>> getPendingCaptures() async {
+    final allCaptures = await loadAllCaptures();
+    return allCaptures.where((c) => c.status == CaptureStatus.ready).toList();
+  }
 }

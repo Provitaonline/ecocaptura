@@ -23,8 +23,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  void dispose() {
+    _captureController.dispose();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
@@ -48,8 +53,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SyncButton(),
-            //Text(context.i18n.recentCaptures, style: Theme.of(context).textTheme.titleLarge),
+            // Pass the controller here
+            SyncButton(captureController: _captureController),
             const SizedBox(height: 10),
             Expanded(
               child: CaptureList(controller: _captureController),
