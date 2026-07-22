@@ -8,8 +8,6 @@ import './widgets/full_screen_photo_view.dart';
 import '../../../core/constants/app_constants.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
-// import 'dart:convert';
-
 class CaptureEditorScreen extends StatefulWidget {
   final CaptureController controller;
   final CaptureModel? existingCapture;
@@ -31,11 +29,13 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
   late List<PhotoEntry> _photoEntries;
   late int _selectedQuality;
   late String? _selectedReason;
+  late bool _shouldRetain;
 
   late int _initialQuality;
   String? _initialReason;
   late String _initialDescription;
   late List<PhotoEntry> _initialPhotos;
+  late bool _initialRetain;
   
   bool get isEditing => widget.existingCapture != null;
 
@@ -47,12 +47,14 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
     _initialReason = widget.existingCapture?.qualityReason;
     _initialDescription = widget.existingCapture?.description ?? '';
     _initialPhotos = List.from(widget.existingCapture?.photos ?? []);
+    _initialRetain = widget.existingCapture?.shouldRetain ?? false;
 
     _descController = TextEditingController(text: widget.existingCapture?.description ?? '');
     _descController.addListener(_updateButtonState);
     _photoEntries = List.from(widget.existingCapture?.photos ?? []);
     _selectedQuality = widget.existingCapture?.qualityScore ?? 3;
     _selectedReason = widget.existingCapture?.qualityReason;
+    _shouldRetain = _initialRetain;
   }
 
   void _updateButtonState() {
@@ -73,13 +75,14 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
   }
 
   bool _isDirty() {
-
     if (_descController.text != _initialDescription) return true;
     if (_selectedQuality != _initialQuality) return true;
+    if (_shouldRetain != _initialRetain) return true;
+    
     final currentReason = (_selectedReason == null || _selectedReason == "") ? null : _selectedReason;
     final initialReason = (_initialReason == null || _initialReason == "") ? null : _initialReason;
     if (currentReason != initialReason) return true;
-        if (_photoEntries.length != _initialPhotos.length) return true;
+    if (_photoEntries.length != _initialPhotos.length) return true;
     
     return false;
   }
@@ -93,6 +96,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
         photos: _photoEntries,
         qualityScore: _selectedQuality,
         qualityReason: _selectedReason,
+        shouldRetain: _shouldRetain,
       );
       widget.controller.updateCapture(captureToSave);
     } else {
@@ -102,34 +106,25 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
         photos: _photoEntries,
         qualityScore: _selectedQuality, 
         qualityReason: _selectedReason,
+        shouldRetain: _shouldRetain,
         status: CaptureStatus.inProgress,
         timestamp: DateTime.now(),
       );
       widget.controller.addCapture(captureToSave);
     }
 
-    /* For debugging
-    const encoder =  JsonEncoder.withIndent('  ');
-    debugPrint('--- SAVING CAPTURE DATA ---');
-    debugPrint(encoder.convert(captureToSave.toJson())); 
-    debugPrint('---------------------------');
-    */
-
     if (mounted) Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    
     return PopScope(
-
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
 
         if (_isDirty()) {
           final navigator = Navigator.of(context);
-          
           final shouldQuit = await _showExitConfirmationDialog(context);
           
           if (shouldQuit == true && mounted) {
@@ -214,7 +209,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
             ),
           ),
         ),
-      )
+      ),
     );
   }
 
@@ -270,16 +265,16 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                     final bool? shouldDelete = await showDialog<bool>(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title:  Text(context.i18n.deletePhotoTitle),
-                        content:  Text(context.i18n.deletePhotoMessage),
+                        title: Text(context.i18n.deletePhotoTitle),
+                        content: Text(context.i18n.deletePhotoMessage),
                         actions: [
                           TextButton(
-                            onPressed: () => Navigator.pop(context, false), // Cancel
-                            child:  Text(context.i18n.cancel),
+                            onPressed: () => Navigator.pop(context, false),
+                            child: Text(context.i18n.cancel),
                           ),
                           TextButton(
-                            onPressed: () => Navigator.pop(context, true), // Confirm
-                            child:  Text(context.i18n.delete, style: const TextStyle(color: Colors.red)),
+                            onPressed: () => Navigator.pop(context, true),
+                            child: Text(context.i18n.delete, style: const TextStyle(color: Colors.red)),
                           ),
                         ],
                       ),
@@ -338,36 +333,72 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(context.i18n.dataQuality, style: Theme.of(context).textTheme.bodySmall),
-        const SizedBox(height: 8),
-        RatingBar.builder(
-          ignoreGestures: widget.isReadOnly,
-          initialRating: _selectedQuality.toDouble(),
-          minRating: 1,
-          direction: Axis.horizontal,
-          allowHalfRating: false,
-          itemCount: 3,
-          itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-          itemBuilder: (context, _) => const Icon(
-            Icons.star,
-            color: Colors.amber,
-          ),
-          onRatingUpdate: (rating) {
-            setState(() {
-              _selectedQuality = rating.toInt();
-              if (_selectedQuality == 3) {
-                _selectedReason = "";
-              } else {
-                if (_selectedReason == "" || _selectedReason == null) {
-                  _selectedReason = QualityReasons.other; 
-                }
-              }
-            });
-          },
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(context.i18n.dataQuality, style: Theme.of(context).textTheme.bodySmall),
+                  const SizedBox(height: 8),
+                  RatingBar.builder(
+                    ignoreGestures: widget.isReadOnly,
+                    initialRating: _selectedQuality.toDouble(),
+                    minRating: 1,
+                    direction: Axis.horizontal,
+                    allowHalfRating: false,
+                    itemCount: 3,
+                    itemSize: 28.0,
+                    itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+                    itemBuilder: (context, _) => const Icon(
+                      Icons.star,
+                      color: Colors.amber,
+                    ),
+                    onRatingUpdate: (rating) {
+                      setState(() {
+                        _selectedQuality = rating.toInt();
+                        if (_selectedQuality == 3) {
+                          _selectedReason = "";
+                        } else {
+                          if (_selectedReason == "" || _selectedReason == null) {
+                            _selectedReason = QualityReasons.other; 
+                          }
+                        }
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Retain',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  Checkbox(
+                    value: _shouldRetain,
+                    onChanged: widget.isReadOnly 
+                        ? null 
+                        : (val) => setState(() => _shouldRetain = val ?? true),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 16),
         
-        // Reason (Visible if quality < 3)
         if (_selectedQuality < 3)
           DropdownButtonFormField<String>(
             // ignore: deprecated_member_use
@@ -396,7 +427,6 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
       ],
     );
   }
-
 
   Future<bool?> _showExitConfirmationDialog(BuildContext context) {
     return showDialog<bool>(

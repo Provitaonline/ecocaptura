@@ -71,8 +71,15 @@ class CaptureApi {
           
           await _storage.deleteCapture(capture.id!);
         } else {
-          debugPrint('[CaptureApi] -> Retaining local capture and assets as requested.');
-          // TODO: Update local record to mark as synced: true
+          debugPrint('[CaptureApi] -> Retaining local capture and marking as uploaded.');
+          
+          // Create an updated copy with status changed to uploaded
+          final updatedCapture = capture.copyWith(
+            status: CaptureStatus.uploaded,
+          );
+          
+          // Save the updated record back to local storage
+          await _storage.saveCapture(updatedCapture);
         }
         
       } catch (e) {
