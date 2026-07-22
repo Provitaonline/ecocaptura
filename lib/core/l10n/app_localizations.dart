@@ -373,6 +373,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Connect to Wi-Fi to Sync'**
   String get connectToSync;
+
+  /// No description provided for @retain.
+  ///
+  /// In en, this message translates to:
+  /// **'Retain'**
+  String get retain;
 }
 
 class _AppLocalizationsDelegate

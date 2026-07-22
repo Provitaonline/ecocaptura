@@ -69,5 +69,6 @@
     }
   },
   "sync": "Sync Captures",
-  "connectToSync": "Connect to Wi-Fi to Sync"
+  "connectToSync": "Connect to Wi-Fi to Sync",
+  "retain": "Retain"
 }

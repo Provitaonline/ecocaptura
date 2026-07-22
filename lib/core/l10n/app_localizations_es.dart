@@ -166,4 +166,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get connectToSync => 'Conectar a Wi-Fi para subir';
+
+  @override
+  String get retain => 'No borrar';
 }

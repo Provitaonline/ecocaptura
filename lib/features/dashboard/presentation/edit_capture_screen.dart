@@ -383,7 +383,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Retain',
+                    context.i18n.retain,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Checkbox(

@@ -167,4 +167,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connectToSync => 'Connect to Wi-Fi to Sync';
+
+  @override
+  String get retain => 'Retain';
 }
