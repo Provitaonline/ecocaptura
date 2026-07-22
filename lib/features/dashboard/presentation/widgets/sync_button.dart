@@ -4,6 +4,7 @@ import '../../../../core/services/auth_service.dart';
 import '../../../../core/extensions/content_extensions.dart';
 import '../controllers/capture_controller.dart';
 import './registration_dialog.dart';
+import '../../data/models/capture_model.dart';
 
 class SyncButton extends StatelessWidget {
   final CaptureController captureController;
@@ -35,6 +36,8 @@ class SyncButton extends StatelessWidget {
       animation: captureController,
       builder: (context, child) {
         final bool isSyncing = captureController.isSyncing;
+        // Check if there are captures ready to sync
+        final bool hasPending = captureController.captures.any((c) => c.status == CaptureStatus.ready);
 
         return StreamBuilder<List<ConnectivityResult>>(
           stream: Connectivity().onConnectivityChanged,
@@ -45,7 +48,7 @@ class SyncButton extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.only(bottom: 10.0),
               child: ElevatedButton.icon(
-                onPressed: (isWifi && !isSyncing)
+                onPressed: (isWifi && !isSyncing && hasPending)
                     ? () async {
                         final authService = AuthService.instance;
 
