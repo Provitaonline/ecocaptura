@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:ecocaptura/features/dashboard/data/models/capture_model.dart';
 import 'package:ecocaptura/features/dashboard/data/services/storage_manager.dart';
 import 'package:ecocaptura/backend/capture_api.dart';
+import 'package:ecocaptura/core/services/auth_service.dart';
 
 class CaptureController extends ChangeNotifier {
   final StorageManager _storage = StorageManager();
@@ -47,7 +48,7 @@ class CaptureController extends ChangeNotifier {
     }
   }
 
-  /// Fetches pending captures and handles the batch sync workflow with the backend.
+  // Fetches pending captures and handles the batch sync workflow with the backend.
   Future<void> syncPendingCaptures() async {
     if (_isSyncing) return;
 
@@ -63,10 +64,17 @@ class CaptureController extends ChangeNotifier {
         return;
       }
 
-      // 2. Trigger batch upload via CaptureApi (assuming it handles current session username internally)
-      await CaptureApi.instance.uploadPendingCaptures(pendingCaptures, 'testuser');
+      // 2. Retrieve the stored username dynamically
+      final String? username = await AuthService.instance.getStoredUsername();
 
-      // 3. Refresh local capture list to reflect any status updates or cleanups
+      if (username == null || username.isEmpty) {
+        throw Exception("No authenticated username found for sync.");
+      }
+
+      // 3. Trigger batch upload via CaptureApi using the retrieved username
+      await CaptureApi.instance.uploadPendingCaptures(pendingCaptures, username);
+
+      // 4. Refresh local capture list to reflect any status updates or cleanups
       await loadCaptures();
     } catch (e) {
       debugPrint("Error syncing pending captures: $e");

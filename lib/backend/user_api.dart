@@ -12,10 +12,13 @@ class UserApi {
         data: {'idToken': idToken},
       );
 
+      final userData = UserData.fromJson(response.data['user']);
+
       return {
         'status': 200,
         'token': response.data['token'],
-        'user': UserData.fromJson(response.data['user']),
+        'username': userData.username,
+        'pk': userData.pk,
       };
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
@@ -32,10 +35,13 @@ class UserApi {
         data: {'idToken': idToken, 'username': username},
       );
 
+      final userData = UserData.fromJson(response.data['user']);
+
       return {
         'status': 201,
         'token': response.data['token'],
-        'user': UserData.fromJson(response.data['user']),
+        'username': userData.username,
+        'pk': userData.pk,
       };
     } on DioException catch (e) {
       if (e.response?.statusCode == 409) {

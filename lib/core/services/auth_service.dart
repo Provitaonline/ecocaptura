@@ -22,7 +22,6 @@ class AuthService {
     await checkInitialAuth();
   }
 
-  /// RESTORED: Required by your UI components
   Future<bool> isAuthenticated() async {
     return (await getStoredToken()) != null;
   }
@@ -31,7 +30,6 @@ class AuthService {
   Future<String?> getGoogleIdToken() async {
     try {
       // 1. Attempt to restore an existing session.
-      // This returns the account if cached, or null if no session exists.
       final GoogleSignInAccount? existingAccount = 
           await GoogleSignIn.instance.attemptLightweightAuthentication();
       
@@ -40,7 +38,6 @@ class AuthService {
           await GoogleSignIn.instance.authenticate();
       
       // 3. Access authentication details (NO 'await' here)
-      // This is the direct access that matches your version's signature.
       final GoogleSignInAuthentication auth = account.authentication;
       
       return auth.idToken;
@@ -65,7 +62,7 @@ class AuthService {
       if (username == null) {
         var response = await _userApi.validateUser(idToken);
         if (response['status'] == 200) {
-          await _saveSession(response['token']);
+          await _saveSession(response['token'], response['username']);
           _cachedIdToken = null; // Clear on success
           return AuthResult.success;
         }
@@ -74,7 +71,7 @@ class AuthService {
       
       var regResponse = await _userApi.registerUser(idToken, username);
       if (regResponse['status'] == 201) {
-        await _saveSession(regResponse['token']);
+        await _saveSession(regResponse['token'], regResponse['username']);
         _cachedIdToken = null; // Clear on success
         return AuthResult.success;
       }
@@ -86,8 +83,9 @@ class AuthService {
     }
   }
 
-  Future<void> _saveSession(String token) async {
+  Future<void> _saveSession(String token, String username) async {
     await _secureStorage.write(key: 'jwt_token', value: token);
+    await _secureStorage.write(key: 'current_username', value: username);
     isAuthenticatedNotifier.value = true;
   }
 
@@ -98,11 +96,16 @@ class AuthService {
   Future<void> logout() async {
     await GoogleSignIn.instance.signOut();
     await _secureStorage.delete(key: 'jwt_token');
+    await _secureStorage.delete(key: 'current_username');
     _cachedIdToken = null;
     isAuthenticatedNotifier.value = false;
   }
 
   Future<String?> getStoredToken() async {
     return await _secureStorage.read(key: 'jwt_token');
+  }
+
+  Future<String?> getStoredUsername() async {
+    return await _secureStorage.read(key: 'current_username');
   }
 }
