@@ -61,8 +61,14 @@ class AuthService {
 
       if (username == null) {
         var response = await _userApi.validateUser(idToken);
+
+        debugPrint('DEBUG validateUser response: $response');
+
+
         if (response['status'] == 200) {
-          await _saveSession(response['token'], response['username']);
+          // Extract username safely from the nested 'user' object
+          final String resolvedUsername = response['user']['username'];
+          await _saveSession(response['refreshToken'], resolvedUsername);
           _cachedIdToken = null; // Clear on success
           return AuthResult.success;
         }
@@ -71,7 +77,8 @@ class AuthService {
       
       var regResponse = await _userApi.registerUser(idToken, username);
       if (regResponse['status'] == 201) {
-        await _saveSession(regResponse['token'], regResponse['username']);
+        final String resolvedUsername = regResponse['user']['username'];
+        await _saveSession(regResponse['refreshToken'], resolvedUsername);
         _cachedIdToken = null; // Clear on success
         return AuthResult.success;
       }
