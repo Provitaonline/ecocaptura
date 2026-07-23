@@ -112,7 +112,28 @@ class CaptureModel {
   }
 
   factory CaptureModel.fromJson(Map<String, dynamic> json) => _$CaptureModelFromJson(json);
-  Map<String, dynamic> toJson() => _$CaptureModelToJson(this);
+    Map<String, dynamic> toJson() => _$CaptureModelToJson(this);
+
+    Map<String, dynamic> toBackendJson(String username) {
+    final json = toJson();
+    
+    // Remove fields that are only relevant to the local device storage
+    json.remove('status');
+    json.remove('shouldRetain');
+
+    json['username'] = username;
+
+    if (json['photos'] is List) {
+      json['photos'] = (json['photos'] as List).map((photo) {
+        if (photo is Map<String, dynamic>) {
+          return Map<String, dynamic>.from(photo)..remove('imagePath');
+        }
+        return photo;
+      }).toList();
+    }
+    
+    return json;
+  }
 }
 
 // Helpers for the JSON converter

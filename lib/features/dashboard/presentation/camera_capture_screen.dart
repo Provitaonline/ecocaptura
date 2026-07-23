@@ -54,8 +54,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
       _controller = CameraController(
         backCamera,
         ResolutionPreset.veryHigh,
-        enableAudio: false,
-        imageFormatGroup: ImageFormatGroup.yuv420,
+        enableAudio: false
       );
 
       // 1. Assign the future BEFORE awaiting it

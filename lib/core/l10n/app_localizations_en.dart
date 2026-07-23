@@ -181,11 +181,5 @@ class AppLocalizationsEn extends AppLocalizations {
   String get username => 'Username';
 
   @override
-  String get usernameFormatLabel => '3-20 letters, numbers, and -, +, \$, @, #';
-
-  @override
-  String get usernameEmpty => 'Cannot be empty';
-
-  @override
-  String get usernameLength => 'Must be 3-20 characters';
+  String get usernameFormatLabel => '3-20 letters, numbers, and -, +, \$, @';
 }

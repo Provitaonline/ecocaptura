@@ -50,7 +50,5 @@
   "register": "Regístrate...",
   "chooseUsername": "Escoge un nombre de usuario único",
   "username": "Nombre de usuario",
-  "usernameFormatLabel": "3-20 letras, numeros, y -, +, $, @, #",
-  "usernameEmpty": "No puede estar vacío",
-  "usernameLength": "Debe tener 3-20 caracteres"
+  "usernameFormatLabel": "3-20 letras, numeros, y -, +, $, @"
 }

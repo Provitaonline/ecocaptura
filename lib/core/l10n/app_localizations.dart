@@ -401,20 +401,8 @@ abstract class AppLocalizations {
   /// No description provided for @usernameFormatLabel.
   ///
   /// In en, this message translates to:
-  /// **'3-20 letters, numbers, and -, +, \$, @, #'**
+  /// **'3-20 letters, numbers, and -, +, \$, @'**
   String get usernameFormatLabel;
-
-  /// No description provided for @usernameEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'Cannot be empty'**
-  String get usernameEmpty;
-
-  /// No description provided for @usernameLength.
-  ///
-  /// In en, this message translates to:
-  /// **'Must be 3-20 characters'**
-  String get usernameLength;
 }
 
 class _AppLocalizationsDelegate

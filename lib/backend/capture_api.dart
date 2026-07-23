@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../features/dashboard/data/models/capture_model.dart';
 import 'package:ecocaptura/features/dashboard/data/services/storage_manager.dart';
@@ -31,12 +32,11 @@ class CaptureApi {
             if (await file.exists()) {
               final fileSize = await file.length();
               
-              // S3 path convention: USER#username/CAPTURE#id/filename.jpg
-              final fileName = photo.imagePath!.split('/').last;
-              final s3Key = 'USER#$username/CAPTURE#${capture.id}/$fileName';
+              // S3 path convention: USER#username/CAPTURE#id/imageid.jpg
+              final s3Key = 'USER#$username/CAPTURE#${capture.id}/PHOTO#${photo.id}.jpg';
               
               debugPrint('[CaptureApi] -> Uploading image to S3: $s3Key ($fileSize bytes)');
-              // TODO: Replace with actual S3 upload call (e.g., Amplify.Storage.uploadFile)
+              // TODO: Replace with actual S3 upload call
               await Future.delayed(const Duration(milliseconds: 300));
               
             } else {
@@ -47,9 +47,10 @@ class CaptureApi {
 
         // 2. Commit metadata to DynamoDB
         // Partition Key: USER#username, Sort Key: CAPTURE#<id>
-        final jsonPayload = capture.toJson();
-        debugPrint('[CaptureApi] -> Committing metadata to DynamoDB for capture ${capture.id}: $jsonPayload');
-        
+        const encoder = JsonEncoder.withIndent('  ');
+        final jsonPayload = encoder.convert(capture.toBackendJson(username));
+        debugPrint('[CaptureApi] -> Committing metadata to DynamoDB for capture ${capture.id}:\n$jsonPayload');
+
         // TODO: Replace with actual API call to save metadata
         await Future.delayed(const Duration(milliseconds: 500));
 

@@ -11,15 +11,34 @@ class RegistrationDialog extends StatefulWidget {
 
 class _RegistrationDialogState extends State<RegistrationDialog> {
   final TextEditingController _usernameController = TextEditingController();
-  String? _errorMessage;
 
   // Validation rules matching the web client
   final RegExp _usernameRegex = RegExp(r'^[a-zA-Z0-9\-\+\$\@\#]{3,20}$');
+  
+  bool _isFormValid = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _usernameController.addListener(_validateForm);
+  }
 
   @override
   void dispose() {
+    _usernameController.removeListener(_validateForm);
     _usernameController.dispose();
     super.dispose();
+  }
+
+  void _validateForm() {
+    final val = _usernameController.text.trim();
+    final isValid = _usernameRegex.hasMatch(val);
+    
+    if (isValid != _isFormValid) {
+      setState(() {
+        _isFormValid = isValid;
+      });
+    }
   }
 
   @override
@@ -35,27 +54,25 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
             const SizedBox(height: 8),
             Text(
               context.i18n.usernameFormatLabel,
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _usernameController,
               maxLength: 20,
               inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\-\+\$\@\#]')),
+                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\-\+\$\@]')),
               ],
               decoration: InputDecoration(
                 labelText: context.i18n.username,
                 border: const OutlineInputBorder(),
-                errorText: _errorMessage,
                 counterText: '', 
               ),
-              onChanged: (_) {
-                if (_errorMessage != null) {
-                  setState(() => _errorMessage = null);
+              onSubmitted: (_) {
+                if (_isFormValid) {
+                  _handleConfirm();
                 }
               },
-              onSubmitted: (_) => _handleConfirm(),
             ),
           ],
         ),
@@ -66,7 +83,7 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
           child: Text(context.i18n.cancel),
         ),
         ElevatedButton(
-          onPressed: _handleConfirm,
+          onPressed: _isFormValid ? _handleConfirm : null,
           child: Text(context.i18n.register),
         ),
       ],
@@ -75,17 +92,8 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
 
   void _handleConfirm() {
     final val = _usernameController.text.trim();
-    
-    if (val.isEmpty) {
-      setState(() => _errorMessage = context.i18n.usernameEmpty);
-      return;
+    if (_usernameRegex.hasMatch(val)) {
+      Navigator.of(context).pop(val);
     }
-
-    if (!_usernameRegex.hasMatch(val)) {
-      setState(() => _errorMessage = context.i18n.usernameLength);
-      return;
-    }
-
-    Navigator.of(context).pop(val);
   }
 }
