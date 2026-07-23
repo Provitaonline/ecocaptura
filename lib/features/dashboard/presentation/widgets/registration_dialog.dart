@@ -13,7 +13,7 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
   final TextEditingController _usernameController = TextEditingController();
 
   // Validation rules matching the web client
-  final RegExp _usernameRegex = RegExp(r'^[a-zA-Z0-9\-\+\$\@\#]{3,20}$');
+  final RegExp _usernameRegex = RegExp(r'^[a-zA-Z0-9\-\+\$\@]{3,20}$');
   
   bool _isFormValid = false;
 
