@@ -49,7 +49,7 @@ class CaptureController extends ChangeNotifier {
   }
 
   // Fetches pending captures and handles the batch sync workflow with the backend.
-  Future<void> syncPendingCaptures() async {
+Future<void> syncPendingCaptures() async {
     if (_isSyncing) return;
 
     _isSyncing = true;
@@ -64,16 +64,20 @@ class CaptureController extends ChangeNotifier {
         return;
       }
 
-      // 2. Retrieve the stored username dynamically
+      // 2. Retrieve the stored username and access token dynamically
       final String? username = await AuthService.instance.getStoredUsername();
-      final String? jwtToken = await AuthService.instance.getStoredToken();
+      final String? accessToken = await AuthService.instance.getStoredAccessToken();
 
       if (username == null || username.isEmpty) {
         throw Exception("No authenticated username found for sync.");
       }
 
-      // 3. Trigger batch upload via CaptureApi using the retrieved username
-      await CaptureApi.instance.uploadPendingCaptures(pendingCaptures, username, jwtToken!);
+      if (accessToken == null || accessToken.isEmpty) {
+        throw Exception("No access token found for sync.");
+      }
+
+      // 3. Trigger batch upload via CaptureApi using the retrieved credentials
+      await CaptureApi.instance.uploadPendingCaptures(pendingCaptures, username, accessToken);
 
       // 4. Refresh local capture list to reflect any status updates or cleanups
       await loadCaptures();
