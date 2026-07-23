@@ -66,13 +66,14 @@ class CaptureController extends ChangeNotifier {
 
       // 2. Retrieve the stored username dynamically
       final String? username = await AuthService.instance.getStoredUsername();
+      final String? jwtToken = await AuthService.instance.getStoredToken();
 
       if (username == null || username.isEmpty) {
         throw Exception("No authenticated username found for sync.");
       }
 
       // 3. Trigger batch upload via CaptureApi using the retrieved username
-      await CaptureApi.instance.uploadPendingCaptures(pendingCaptures, username);
+      await CaptureApi.instance.uploadPendingCaptures(pendingCaptures, username, jwtToken!);
 
       // 4. Refresh local capture list to reflect any status updates or cleanups
       await loadCaptures();

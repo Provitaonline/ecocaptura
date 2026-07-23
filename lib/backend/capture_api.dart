@@ -12,13 +12,15 @@ class CaptureApi {
   /// Loops through a list of local captures ready for upload, 
   /// pushes their images to S3, commits their metadata to DynamoDB, 
   /// and cleans up local storage unless shouldRetain is true.
-  Future<void> uploadPendingCaptures(List<CaptureModel> pendingCaptures, String username) async {
+  Future<void> uploadPendingCaptures(List<CaptureModel> pendingCaptures, String username, String jwtToken) async {
     if (pendingCaptures.isEmpty) {
       debugPrint('[CaptureApi] No pending captures to sync.');
       return;
     }
 
     debugPrint('[CaptureApi] Starting batch sync for ${pendingCaptures.length} capture(s).');
+
+    debugPrint('[CaptureApi] -> Jwt Token: $jwtToken');
 
     for (var capture in pendingCaptures) {
       try {
