@@ -77,8 +77,7 @@ Future<void> syncPendingCaptures() async {
       } catch (e) {
         if (e.toString().contains('401') || e.toString().contains('Unauthorized') || e.toString().contains('RefreshTokenExpired')) {
           debugPrint('[Sync] Refresh token expired. Forcing user logout.');
-          await AuthService.instance.logout(); // Clears secure storage
-          // TODO: Navigate user to your Login/Auth screen
+          await AuthService.instance.logout(); 
         } else {
           debugPrint('[Sync] Sync failed: $e');
         }
