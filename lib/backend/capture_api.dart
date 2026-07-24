@@ -46,6 +46,24 @@ class CaptureApi {
     }
   }
 
+  /// Calls backend /capture endpoint to commit capture and photo metadata
+  Future<void> postCapture(String jsonPayload) async {
+    final response = await AuthService.instance.authenticatedRequest((token) async {
+      return await http.post(
+        Uri.parse('$_baseUrl/capture'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonPayload,
+      );
+    });
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to save capture metadata: ${response.body}');
+    }
+  }
+
   /// Loops through a list of local captures ready for upload, 
   /// pushes their images to S3 using presigned URLs, commits metadata to DynamoDB, 
   /// and cleans up local storage unless shouldRetain is true.
@@ -113,30 +131,13 @@ class CaptureApi {
           }
         }
 
-        // 3. Commit metadata to DynamoDB
+        // 3. Commit metadata to DynamoDB via postCapture
         const encoder = JsonEncoder.withIndent('  ');
         final jsonPayload = encoder.convert(capture.toBackendJson(username));
+        
         debugPrint('[CaptureApi] -> Committing metadata to DynamoDB for capture ${capture.id}');
-
-        /*final response = await AuthService.instance.authenticatedRequest((token) async {
-          return await http.post(
-            Uri.parse('$_baseUrl/capture'),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token',
-            },
-            body: jsonPayload,
-          );
-        });
-
-        if (response.statusCode != 200 && response.statusCode != 201) {
-          throw Exception('Failed to save capture metadata: ${response.body}');
-        } else {
-           debugPrint('[CaptureApi] Successfully uploaded capture: ${capture.id}');
-        } */
-
-       debugPrint('[CaptureApi] Successfully uploaded capture: ${capture.id}');
-       debugPrint('[CaptureApi] Payload: $jsonPayload');
+        await postCapture(jsonPayload);
+        debugPrint('[CaptureApi] Successfully uploaded capture: ${capture.id}');
 
         // 4. Handle local cleanup if shouldRetain is false
         if (!capture.shouldRetain) {
