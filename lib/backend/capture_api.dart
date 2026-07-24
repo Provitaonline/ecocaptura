@@ -2,97 +2,27 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../features/dashboard/data/models/capture_model.dart';
 import 'package:ecocaptura/features/dashboard/data/services/storage_manager.dart';
 import '../core/constants/app_constants.dart';
+import 'package:ecocaptura/core/services/auth_service.dart';
 
 class CaptureApi {
   final StorageManager _storage = StorageManager();
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   
   static final CaptureApi instance = CaptureApi._internal();
   CaptureApi._internal();
 
-  // Base URL configuration (adjust to your backend domain/env)
+  // Base URL configuration
   static const String _baseUrl = ApiConstants.baseUrl;
 
-  /// Helper to make authenticated requests with automatic token refresh on 401
-  Future<http.Response> _authenticatedRequest(
-    Future<http.Response> Function(String accessToken) requestFn,
-  ) async {
-    String? accessToken = await _secureStorage.read(key: 'access_token');
-    
-    // If access token is missing entirely, check if we can refresh right away
-    if (accessToken == null) {
-      debugPrint('[CaptureApi] Access token missing. Attempting session recovery via refresh token...');
-      final refreshed = await _refreshTokens();
-      if (refreshed) {
-        accessToken = await _secureStorage.read(key: 'access_token');
-      }
-      
-      if (accessToken == null) {
-        throw Exception('MissingToken: No active session available. Please log in.');
-      }
-    }
-
-    // First attempt with current access token
-    var response = await requestFn(accessToken);
-
-    // If unauthorized (covers expired 'InvalidToken' or revoked sessions), attempt refresh once
-    if (response.statusCode == 401) {
-      debugPrint('[CaptureApi] Received 401 Unauthorized (InvalidToken/Expired). Attempting token refresh...');
-      final refreshed = await _refreshTokens();
-      
-      if (refreshed) {
-        // FIX: Ensure we read 'access_token' consistently here too
-        accessToken = await _secureStorage.read(key: 'access_token');
-        if (accessToken != null) {
-          debugPrint('[CaptureApi] Token refreshed successfully. Retrying request...');
-          response = await requestFn(accessToken);
-        }
-      } else {
-        throw Exception('InvalidToken: Session expired or invalid. Please log in again.');
-      }
-    }
-
-    return response;
-  }
-
-  /// Refreshes access tokens using the stored refresh token
-  Future<bool> _refreshTokens() async {
-    try {
-      final refreshToken = await _secureStorage.read(key: 'refresh_token');
-      if (refreshToken == null) return false;
-
-      final response = await http.post(
-        Uri.parse('$_baseUrl/refresh'), // Adjust endpoint if needed
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'refreshToken': refreshToken}),
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        await _secureStorage.write(key: 'access_token', value: data['accessToken']);
-        if (data['refreshToken'] != null) {
-          await _secureStorage.write(key: 'refresh_token', value: data['refreshToken']);
-        }
-        return true;
-      }
-      return false;
-    } catch (e) {
-      debugPrint('[CaptureApi] Error refreshing tokens: $e');
-      return false;
-    }
-  }
-
-  // Calls backend backend /presign endpoint to fetch S3 upload URLs
+  // Calls backend /presign endpoint to fetch S3 upload URLs
   Future<List<Map<String, dynamic>>> generatePresignedS3Urls(
     String username, 
     String captureId, 
     List<Map<String, String>> photosPayload,
   ) async {
-    final response = await _authenticatedRequest((token) async {
+    final response = await AuthService.instance.authenticatedRequest((token) async {
       return await http.post(
         Uri.parse('$_baseUrl/presign'),
         headers: {
@@ -119,7 +49,10 @@ class CaptureApi {
   /// Loops through a list of local captures ready for upload, 
   /// pushes their images to S3 using presigned URLs, commits metadata to DynamoDB, 
   /// and cleans up local storage unless shouldRetain is true.
-  Future<void> uploadPendingCaptures(List<CaptureModel> pendingCaptures, String username, String jwtToken) async {
+  Future<void> uploadPendingCaptures(
+    List<CaptureModel> pendingCaptures, 
+    String username
+  ) async {
     if (pendingCaptures.isEmpty) {
       debugPrint('[CaptureApi] No pending captures to sync.');
       return;
@@ -185,9 +118,9 @@ class CaptureApi {
         final jsonPayload = encoder.convert(capture.toBackendJson(username));
         debugPrint('[CaptureApi] -> Committing metadata to DynamoDB for capture ${capture.id}');
 
-        await _authenticatedRequest((token) async {
+        /*final response = await AuthService.instance.authenticatedRequest((token) async {
           return await http.post(
-            Uri.parse('$_baseUrl/user'),
+            Uri.parse('$_baseUrl/capture'),
             headers: {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token',
@@ -196,7 +129,14 @@ class CaptureApi {
           );
         });
 
-        debugPrint('[CaptureApi] Successfully uploaded capture: ${capture.id}');
+        if (response.statusCode != 200 && response.statusCode != 201) {
+          throw Exception('Failed to save capture metadata: ${response.body}');
+        } else {
+           debugPrint('[CaptureApi] Successfully uploaded capture: ${capture.id}');
+        } */
+
+       debugPrint('[CaptureApi] Successfully uploaded capture: ${capture.id}');
+       debugPrint('[CaptureApi] Payload: $jsonPayload');
 
         // 4. Handle local cleanup if shouldRetain is false
         if (!capture.shouldRetain) {

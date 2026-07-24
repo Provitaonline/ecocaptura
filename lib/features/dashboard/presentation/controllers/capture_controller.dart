@@ -66,18 +66,13 @@ Future<void> syncPendingCaptures() async {
 
       // 2. Retrieve the stored username and access token dynamically
       final String? username = await AuthService.instance.getStoredUsername();
-      final String? accessToken = await AuthService.instance.getStoredAccessToken();
 
       if (username == null || username.isEmpty) {
         throw Exception("No authenticated username found for sync.");
       }
 
-      if (accessToken == null || accessToken.isEmpty) {
-        throw Exception("No access token found for sync.");
-      }
-
       // 3. Trigger batch upload via CaptureApi using the retrieved credentials
-      await CaptureApi.instance.uploadPendingCaptures(pendingCaptures, username, accessToken);
+      await CaptureApi.instance.uploadPendingCaptures(pendingCaptures, username);
 
       // 4. Refresh local capture list to reflect any status updates or cleanups
       await loadCaptures();

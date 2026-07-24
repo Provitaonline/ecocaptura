@@ -3,6 +3,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:ecocaptura/backend/user_api.dart';
 import '../constants/app_constants.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 enum AuthResult { success, cancelled, failed }
 
@@ -144,5 +146,73 @@ class AuthService {
 
   Future<String?> getStoredUsername() async {
     return await _secureStorage.read(key: _keyUsername);
+  }
+
+  /// Executes an HTTP request with automatic access token injection and 401 retry-on-refresh logic.
+  Future<http.Response> authenticatedRequest(
+    Future<http.Response> Function(String accessToken) requestFn,
+  ) async {
+    String? accessToken = await _secureStorage.read(key: _keyAccessToken);
+    
+    // If access token is missing entirely, check if we can refresh right away
+    if (accessToken == null) {
+      debugPrint('[AuthService] Access token missing. Attempting session recovery via refresh token...');
+      final refreshed = await _refreshTokens();
+      if (refreshed) {
+        accessToken = await _secureStorage.read(key: _keyAccessToken);
+      }
+      
+      if (accessToken == null) {
+        throw Exception('MissingToken: No active session available. Please log in.');
+      }
+    }
+
+    // First attempt with current access token
+    var response = await requestFn(accessToken);
+
+    // If unauthorized (covers expired 'InvalidToken' or revoked sessions), attempt refresh once
+    if (response.statusCode == 401) {
+      debugPrint('[AuthService] Received 401 Unauthorized (InvalidToken/Expired). Attempting token refresh...');
+      final refreshed = await _refreshTokens();
+      
+      if (refreshed) {
+        accessToken = await _secureStorage.read(key: _keyAccessToken);
+        if (accessToken != null) {
+          debugPrint('[AuthService] Token refreshed successfully. Retrying request...');
+          response = await requestFn(accessToken);
+        }
+      } else {
+        throw Exception('InvalidToken: Session expired or invalid. Please log in again.');
+      }
+    }
+
+    return response;
+  }
+
+  /// Refreshes access tokens using the stored refresh token
+  Future<bool> _refreshTokens() async {
+    try {
+      final refreshToken = await _secureStorage.read(key: _keyRefreshToken);
+      if (refreshToken == null) return false;
+
+      final response = await http.post(
+        Uri.parse('${ApiConstants.baseUrl}/refresh'), 
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'refreshToken': refreshToken}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        await _secureStorage.write(key: _keyAccessToken, value: data['accessToken']);
+        if (data['refreshToken'] != null) {
+          await _secureStorage.write(key: _keyRefreshToken, value: data['refreshToken']);
+        }
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('[AuthService] Error refreshing tokens: $e');
+      return false;
+    }
   }
 }
