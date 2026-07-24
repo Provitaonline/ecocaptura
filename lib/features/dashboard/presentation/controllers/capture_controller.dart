@@ -72,7 +72,17 @@ Future<void> syncPendingCaptures() async {
       }
 
       // 3. Trigger batch upload via CaptureApi using the retrieved credentials
-      await CaptureApi.instance.uploadPendingCaptures(pendingCaptures, username);
+      try {
+        await CaptureApi.instance.uploadPendingCaptures(pendingCaptures, username);
+      } catch (e) {
+        if (e.toString().contains('401') || e.toString().contains('Unauthorized') || e.toString().contains('RefreshTokenExpired')) {
+          debugPrint('[Sync] Refresh token expired. Forcing user logout.');
+          await AuthService.instance.logout(); // Clears secure storage
+          // TODO: Navigate user to your Login/Auth screen
+        } else {
+          debugPrint('[Sync] Sync failed: $e');
+        }
+      }
 
       // 4. Refresh local capture list to reflect any status updates or cleanups
       await loadCaptures();

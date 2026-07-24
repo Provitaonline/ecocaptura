@@ -1,10 +1,9 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:ecocaptura/core/services/auth_service.dart';
 import 'package:ecocaptura/core/extensions/content_extensions.dart';
 import '../controllers/capture_controller.dart';
-import './registration_dialog.dart';
 import 'package:ecocaptura/features/dashboard/data/models/capture_model.dart';
+import '../helpers/sync_helper.dart';
 
 class SyncButton extends StatelessWidget {
   final CaptureController captureController;
@@ -49,54 +48,7 @@ class SyncButton extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 10.0),
               child: ElevatedButton.icon(
                 onPressed: (isWifi && !isSyncing && hasPending)
-                    ? () async {
-                        final authService = AuthService.instance;
-
-                        if (await authService.isAuthenticated()) {
-                          await _executeSync(context);
-                          return;
-                        }
-
-                        // Initial login attempt
-                        AuthResult result = await authService.loginWithGoogle();
-
-                        if (result == AuthResult.failed) {
-                          bool registrationSuccessful = false;
-                          String? registeredUsername;
-
-                          while (!registrationSuccessful) {
-                            if (!context.mounted) return;
-
-                            final String? username = await showDialog<String>(
-                              context: context,
-                              builder: (context) => const RegistrationDialog(),
-                            );
-
-                            if (username == null) break;
-
-                            final AuthResult regResult = await authService.loginWithGoogle(username: username);
-                            
-                            if (regResult == AuthResult.success) {
-                              registrationSuccessful = true;
-                              registeredUsername = username;
-                            } else if (regResult == AuthResult.cancelled) {
-                              break; 
-                            } else {
-                              if (!context.mounted) return;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('That username is taken or an error occurred. Please try another.')),
-                              );
-                            }
-                          }
-
-                          if (registrationSuccessful && registeredUsername != null) {
-                            if (!context.mounted) return;
-                            await _executeSync(context);
-                          }
-                        } else if (result == AuthResult.success) {
-                          await _executeSync(context);
-                        }
-                      }
+                    ? () => SyncHelper.ensureAuthenticatedAndSynced(context, _executeSync)
                     : null,
                 icon: isSyncing 
                     ? const SizedBox(

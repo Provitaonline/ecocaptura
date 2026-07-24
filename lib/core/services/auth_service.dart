@@ -182,6 +182,8 @@ class AuthService {
           response = await requestFn(accessToken);
         }
       } else {
+        debugPrint('[AuthService] Token refresh failed. Clearing session and logging out.');
+        await logout();
         throw Exception('InvalidToken: Session expired or invalid. Please log in again.');
       }
     }
