@@ -7,6 +7,7 @@ import 'camera_capture_screen.dart';
 import './widgets/full_screen_photo_view.dart';
 import 'package:ecocaptura/core/constants/app_constants.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:ecocaptura/utils/id_generator.dart';
 
 class CaptureEditorScreen extends StatefulWidget {
   final CaptureController controller;
@@ -101,7 +102,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
       widget.controller.updateCapture(captureToSave);
     } else {
       captureToSave = CaptureModel(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        id: NumericIdGenerator.generateId(),
         description: _descController.text,
         photos: _photoEntries,
         qualityScore: _selectedQuality, 
@@ -315,7 +316,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
         );
         if (newEntry != null && mounted) {
           setState(() {
-            newEntry.id = DateTime.now().millisecondsSinceEpoch.toString();
+            newEntry.id = NumericIdGenerator.generateId();
             _photoEntries.add(newEntry);
             _updateButtonState();
           });
