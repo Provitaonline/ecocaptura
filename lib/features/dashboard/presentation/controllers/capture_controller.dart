@@ -49,14 +49,14 @@ class CaptureController extends ChangeNotifier {
   }
 
   // Fetches pending captures and handles the batch sync workflow with the backend.
-Future<void> syncPendingCaptures() async {
+  Future<void> syncPendingCaptures() async {
     if (_isSyncing) return;
 
     _isSyncing = true;
     notifyListeners();
 
     try {
-      // 1. Fetch pending captures from local storage
+      // Fetch pending captures from local storage
       final pendingCaptures = await _storage.getPendingCaptures();
 
       if (pendingCaptures.isEmpty) {
@@ -64,26 +64,34 @@ Future<void> syncPendingCaptures() async {
         return;
       }
 
-      // 2. Retrieve the stored username and access token dynamically
+      // Retrieve the stored username and access token dynamically
       final String? username = await AuthService.instance.getStoredUsername();
 
       if (username == null || username.isEmpty) {
         throw Exception("No authenticated username found for sync.");
       }
 
-      // 3. Trigger batch upload via CaptureApi using the retrieved credentials
+      // Trigger batch upload via CaptureApi
       try {
         await CaptureApi.instance.uploadPendingCaptures(pendingCaptures, username);
       } catch (e) {
-        if (e.toString().contains('401') || e.toString().contains('Unauthorized') || e.toString().contains('RefreshTokenExpired')) {
+        final errorStr = e.toString();
+        if (errorStr.contains('401') || 
+            errorStr.contains('Unauthorized') || 
+            errorStr.contains('RefreshTokenExpired')) {
+          
           debugPrint('[Sync] Refresh token expired. Forcing user logout.');
-          await AuthService.instance.logout(); 
+          await AuthService.instance.logout();
+          
+          // Throw a clean exception so the outer catch handles navigation / UI warning
+          throw Exception('Session expired. Please log in again.');
         } else {
-          debugPrint('[Sync] Sync failed: $e');
+          // Rethrow other unexpected network/server errors
+          rethrow;
         }
       }
 
-      // 4. Refresh local capture list to reflect any status updates or cleanups
+      // Refresh local capture list
       await loadCaptures();
     } catch (e) {
       debugPrint("Error syncing pending captures: $e");
