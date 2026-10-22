@@ -45,7 +45,7 @@ class SyncButton extends StatelessWidget {
             final bool isWifi = results.contains(ConnectivityResult.wifi);
 
             return Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
+              padding: const EdgeInsets.only(bottom: 0.0),
               child: ElevatedButton.icon(
                 onPressed: (isWifi && !isSyncing && hasPending)
                     ? () => SyncHelper.ensureAuthenticatedAndSynced(context, _executeSync)

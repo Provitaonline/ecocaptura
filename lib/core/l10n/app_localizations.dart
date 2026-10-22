@@ -421,6 +421,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cannot capture: GPS location not ready.'**
   String get gpsNotReady;
+
+  /// No description provided for @selectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Select all'**
+  String get selectAll;
 }
 
 class _AppLocalizationsDelegate

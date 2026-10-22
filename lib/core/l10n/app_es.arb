@@ -53,5 +53,6 @@
   "username": "Nombre de usuario",
   "usernameFormatLabel": "3-20 letras, numeros, y -, +, $, @",
   "waitingForGps": "Esperando señal de GPS...",
-  "gpsNotReady": "No se puede capturar: GPS no está listo."
+  "gpsNotReady": "No se puede capturar: GPS no está listo.",
+  "selectAll": "Seleccionar todas"
 }

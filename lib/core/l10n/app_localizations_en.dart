@@ -191,4 +191,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gpsNotReady => 'Cannot capture: GPS location not ready.';
+
+  @override
+  String get selectAll => 'Select all';
 }
