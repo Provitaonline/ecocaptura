@@ -69,14 +69,21 @@ class CaptureApi {
   /// and cleans up local storage unless shouldRetain is true.
   Future<void> uploadPendingCaptures(
     List<CaptureModel> pendingCaptures, 
-    String username
-  ) async {
+    String username, {
+    void Function(int completed, int total)? onProgress,
+  }) async {
     if (pendingCaptures.isEmpty) {
       debugPrint('[CaptureApi] No pending captures to sync.');
       return;
     }
 
     debugPrint('[CaptureApi] Starting batch sync for ${pendingCaptures.length} capture(s).');
+    
+    int completedCount = 0;
+    int totalCount = pendingCaptures.length;
+    
+    // Initial progress report (0 / total)
+    onProgress?.call(completedCount, totalCount);
 
     for (var capture in pendingCaptures) {
       try {
@@ -154,6 +161,10 @@ class CaptureApi {
           final updatedCapture = capture.copyWith(status: CaptureStatus.uploaded);
           await _storage.saveCapture(updatedCapture);
         }
+
+        // Increment count and report progress to controller
+        completedCount++;
+        onProgress?.call(completedCount, totalCount);
         
       } catch (e) {
         debugPrint('[CaptureApi] Error uploading capture ${capture.id}: $e');

@@ -11,6 +11,13 @@ class CaptureController extends ChangeNotifier {
   bool _isSyncing = false;
   bool get isSyncing => _isSyncing;
 
+  // Sync progress tracking variables
+  int _syncTotal = 0;
+  int _syncCurrent = 0;
+
+  double get syncProgress => _syncTotal == 0 ? 0.0 : _syncCurrent / _syncTotal;
+  String get syncProgressText => '$_syncCurrent/$_syncTotal';
+
   List<CaptureModel> get captures => _captures;
 
   Future<void> loadCaptures() async {
@@ -24,12 +31,10 @@ class CaptureController extends ChangeNotifier {
   }
 
   Future<void> deleteCapture(CaptureModel capture) async {
-    // 1. Immediate UI update
     _captures.remove(capture);
     notifyListeners();
 
     try {
-      // 2. Simply pass the object ID
       await _storage.deleteCapture(capture.id!);
       await loadCaptures();
     } catch (e) {
@@ -53,6 +58,8 @@ class CaptureController extends ChangeNotifier {
     if (_isSyncing) return;
 
     _isSyncing = true;
+    _syncCurrent = 0;
+    _syncTotal = 0;
     notifyListeners();
 
     try {
@@ -64,6 +71,9 @@ class CaptureController extends ChangeNotifier {
         return;
       }
 
+      _syncTotal = pendingCaptures.length;
+      notifyListeners();
+
       // Retrieve the stored username and access token dynamically
       final String? username = await AuthService.instance.getStoredUsername();
 
@@ -73,7 +83,17 @@ class CaptureController extends ChangeNotifier {
 
       // Trigger batch upload via CaptureApi
       try {
-        await CaptureApi.instance.uploadPendingCaptures(pendingCaptures, username);
+        await CaptureApi.instance.uploadPendingCaptures(
+          pendingCaptures, 
+          username,
+          onProgress: (completed, total) {
+            _syncCurrent = completed;
+            _syncTotal = total;
+            notifyListeners();
+          },
+        );
+        _syncCurrent = _syncTotal;
+        notifyListeners();
       } catch (e) {
         final errorStr = e.toString();
         if (errorStr.contains('401') || 
@@ -83,10 +103,8 @@ class CaptureController extends ChangeNotifier {
           debugPrint('[Sync] Refresh token expired. Forcing user logout.');
           await AuthService.instance.logout();
           
-          // Throw a clean exception so the outer catch handles navigation / UI warning
           throw Exception('Session expired. Please log in again.');
         } else {
-          // Rethrow other unexpected network/server errors
           rethrow;
         }
       }
@@ -98,6 +116,8 @@ class CaptureController extends ChangeNotifier {
       rethrow;
     } finally {
       _isSyncing = false;
+      _syncCurrent = 0;
+      _syncTotal = 0;
       notifyListeners();
     }
   }

@@ -78,5 +78,6 @@
   "usernameFormatLabel": "3-20 letters, numbers, and -, +, $, @",
   "waitingForGps": "Waiting for GPS location lock...",
   "gpsNotReady": "Cannot capture: GPS location not ready.",
-  "selectAll": "Select all"
+  "selectAll": "Select all",
+  "syncCompleted": "Sync completed successfully"
 }

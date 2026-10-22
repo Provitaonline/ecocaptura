@@ -193,4 +193,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get selectAll => 'Seleccionar todas';
+
+  @override
+  String get syncCompleted => 'Sincronización completada';
 }

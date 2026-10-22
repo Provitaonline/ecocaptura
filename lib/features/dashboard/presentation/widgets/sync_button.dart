@@ -19,7 +19,7 @@ class SyncButton extends StatelessWidget {
 
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sync completed successfully!')),
+        SnackBar(content: Text(context.i18n.syncCompleted)),
       );
     } catch (e) {
       if (!context.mounted) return;
@@ -35,7 +35,6 @@ class SyncButton extends StatelessWidget {
       animation: captureController,
       builder: (context, child) {
         final bool isSyncing = captureController.isSyncing;
-        // Check if there are captures ready to sync
         final bool hasPending = captureController.captures.any((c) => c.status == CaptureStatus.ready);
 
         return StreamBuilder<List<ConnectivityResult>>(
@@ -44,23 +43,32 @@ class SyncButton extends StatelessWidget {
             final results = snapshot.data ?? [ConnectivityResult.none];
             final bool isWifi = results.contains(ConnectivityResult.wifi);
 
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 0.0),
-              child: ElevatedButton.icon(
-                onPressed: (isWifi && !isSyncing && hasPending)
-                    ? () => SyncHelper.ensureAuthenticatedAndSynced(context, _executeSync)
-                    : null,
-                icon: isSyncing 
-                    ? const SizedBox(
-                        width: 18, 
-                        height: 18, 
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                      )
-                    : const Icon(Icons.cloud_upload),
-                label: Text(isSyncing ? context.i18n.syncing : (isWifi ? context.i18n.sync : context.i18n.connectToSync)),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(45),
-                ),
+            // Determine icon state: Deterministic progress ring when uploading, standard cloud icon otherwise
+            final Widget buttonIcon = isSyncing
+                ? SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      value: captureController.syncProgress > 0 ? captureController.syncProgress : null,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  )
+                : const Icon(Icons.cloud_upload);
+
+            // Determine label state
+            final String buttonText = isSyncing
+                ? '${context.i18n.syncing} (${captureController.syncProgressText})'
+                : (isWifi ? context.i18n.sync : context.i18n.connectToSync);
+
+            return ElevatedButton.icon(
+              onPressed: (isWifi && !isSyncing && hasPending)
+                  ? () => SyncHelper.ensureAuthenticatedAndSynced(context, _executeSync)
+                  : null,
+              icon: buttonIcon,
+              label: Text(buttonText),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(45),
               ),
             );
           },
