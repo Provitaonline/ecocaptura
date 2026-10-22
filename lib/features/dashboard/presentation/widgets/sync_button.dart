@@ -57,7 +57,7 @@ class SyncButton extends StatelessWidget {
                         child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                       )
                     : const Icon(Icons.cloud_upload),
-                label: Text(isSyncing ? 'Syncing...' : (isWifi ? context.i18n.sync : context.i18n.connectToSync)),
+                label: Text(isSyncing ? context.i18n.syncing : (isWifi ? context.i18n.sync : context.i18n.connectToSync)),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size.fromHeight(45),
                 ),

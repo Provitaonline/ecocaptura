@@ -374,6 +374,12 @@ abstract class AppLocalizations {
   /// **'Connect to Wi-Fi to Sync'**
   String get connectToSync;
 
+  /// No description provided for @syncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing...'**
+  String get syncing;
+
   /// No description provided for @retain.
   ///
   /// In en, this message translates to:

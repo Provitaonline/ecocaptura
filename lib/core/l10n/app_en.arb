@@ -70,6 +70,7 @@
   },
   "sync": "Sync Captures",
   "connectToSync": "Connect to Wi-Fi to Sync",
+  "syncing": "Syncing...",
   "retain": "Retain",
   "register": "Register...",
   "chooseUsername": "Choose a unique username to continue",
