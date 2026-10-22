@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:image/image.dart' as img;
 import 'package:ecocaptura/core/constants/app_spacing.dart';
 import 'package:ecocaptura/core/l10n/app_localizations.dart';
 import 'package:ecocaptura/core/extensions/content_extensions.dart';
@@ -150,7 +151,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
     super.dispose();
   }
 
-  Future<void> _takePicture() async {
+Future<void> _takePicture() async {
     if (_controller == null || !_controller!.value.isInitialized) return;
     
     final currentFrame = _telemetryNotifier.value;
@@ -168,6 +169,10 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
       final XFile photoFile = await _controller!.takePicture();
       final double fov = 75.0 / zoomLevel;
 
+      // Read file and decode metadata (width, height)
+      final bytes = await File(photoFile.path).readAsBytes();
+      final decodedImage = img.decodeImage(bytes);
+
       final entry = PhotoEntry(
         imagePath: photoFile.path,
         heading: currentFrame.heading,
@@ -179,6 +184,8 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
         gpsCoordinates: "${currentFrame.position!.latitude},${currentFrame.position!.longitude}",
         gpsAccuracy: currentFrame.position?.accuracy,
         gpsAltitude: currentFrame.position?.altitude,
+        width: decodedImage?.width,
+        height: decodedImage?.height,
         timestamp: DateTime.now(),
       );
       

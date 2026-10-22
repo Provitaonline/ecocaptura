@@ -38,7 +38,9 @@ class PhotoEntry {
   String? gpsCoordinates;
   double? gpsAccuracy;
   double? gpsAltitude;
-  
+  int? width;
+  int? height;
+
   @JsonKey(fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)
   DateTime? timestamp;
 
@@ -55,6 +57,8 @@ class PhotoEntry {
     this.gpsCoordinates, 
     this.gpsAccuracy, 
     this.gpsAltitude, 
+    this.width,
+    this.height,
     this.timestamp
   });
 

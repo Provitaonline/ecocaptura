@@ -40,6 +40,8 @@ PhotoEntry _$PhotoEntryFromJson(Map<String, dynamic> json) => PhotoEntry(
   gpsCoordinates: json['gpsCoordinates'] as String?,
   gpsAccuracy: (json['gpsAccuracy'] as num?)?.toDouble(),
   gpsAltitude: (json['gpsAltitude'] as num?)?.toDouble(),
+  width: (json['width'] as num?)?.toInt(),
+  height: (json['height'] as num?)?.toInt(),
   timestamp: _dateTimeFromJson(json['timestamp']),
 );
 
@@ -57,6 +59,8 @@ Map<String, dynamic> _$PhotoEntryToJson(PhotoEntry instance) =>
       'gpsCoordinates': instance.gpsCoordinates,
       'gpsAccuracy': instance.gpsAccuracy,
       'gpsAltitude': instance.gpsAltitude,
+      'width': instance.width,
+      'height': instance.height,
       'timestamp': _dateTimeToJson(instance.timestamp),
     };
 
