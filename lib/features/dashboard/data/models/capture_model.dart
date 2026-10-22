@@ -75,6 +75,9 @@ class CaptureModel {
 
   int? qualityScore; 
   String? qualityReason;
+  
+  String? deviceModel;
+  String? osVersion;
 
   @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)
   CaptureStatus status;
@@ -89,6 +92,8 @@ class CaptureModel {
     required this.photos,
     this.qualityScore = 3, // Default
     this.qualityReason,
+    this.deviceModel,
+    this.osVersion,
     required this.status, 
     this.timestamp
   });
@@ -101,6 +106,8 @@ class CaptureModel {
     CaptureStatus? status,
     int? qualityScore,
     String? qualityReason,
+    String? deviceModel,
+    String? osVersion,
     DateTime? timestamp,
   }) {
     return CaptureModel(
@@ -110,15 +117,17 @@ class CaptureModel {
       photos: photos ?? this.photos,
       qualityScore: qualityScore ?? this.qualityScore,
       qualityReason: (qualityReason == "") ? null : (qualityReason ?? this.qualityReason),
+      deviceModel: deviceModel ?? this.deviceModel,
+      osVersion: osVersion ?? this.osVersion,
       status: status ?? this.status,
       timestamp: timestamp ?? this.timestamp,
     );
   }
 
   factory CaptureModel.fromJson(Map<String, dynamic> json) => _$CaptureModelFromJson(json);
-    Map<String, dynamic> toJson() => _$CaptureModelToJson(this);
+  Map<String, dynamic> toJson() => _$CaptureModelToJson(this);
 
-    Map<String, dynamic> toBackendJson(String username) {
+  Map<String, dynamic> toBackendJson(String username) {
     final json = toJson();
     
     // Remove fields that are only relevant to the local device storage

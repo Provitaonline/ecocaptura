@@ -73,6 +73,8 @@ CaptureModel _$CaptureModelFromJson(Map<String, dynamic> json) => CaptureModel(
       .toList(),
   qualityScore: (json['qualityScore'] as num?)?.toInt() ?? 3,
   qualityReason: json['qualityReason'] as String?,
+  deviceModel: json['deviceModel'] as String?,
+  osVersion: json['osVersion'] as String?,
   status: _statusFromJson((json['status'] as num).toInt()),
   timestamp: _dateTimeFromJson(json['timestamp']),
 );
@@ -85,6 +87,8 @@ Map<String, dynamic> _$CaptureModelToJson(CaptureModel instance) =>
       'photos': instance.photos.map((e) => e.toJson()).toList(),
       'qualityScore': instance.qualityScore,
       'qualityReason': instance.qualityReason,
+      'deviceModel': instance.deviceModel,
+      'osVersion': instance.osVersion,
       'status': _statusToJson(instance.status),
       'timestamp': _dateTimeToJson(instance.timestamp),
     };

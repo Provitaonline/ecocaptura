@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:ecocaptura/core/extensions/content_extensions.dart';
 import '../data/models/capture_model.dart'; 
 import './controllers/capture_controller.dart';
@@ -32,6 +33,9 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
   late String? _selectedReason;
   late bool _shouldRetain;
 
+  String? _deviceModel;
+  String? _osVersion;
+
   late int _initialQuality;
   String? _initialReason;
   late String _initialDescription;
@@ -49,6 +53,10 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
     _initialDescription = widget.existingCapture?.description ?? '';
     _initialPhotos = List.from(widget.existingCapture?.photos ?? []);
     _initialRetain = widget.existingCapture?.shouldRetain ?? false;
+    
+    // Load existing device info if editing, otherwise fetch for new capture
+    _deviceModel = widget.existingCapture?.deviceModel;
+    _osVersion = widget.existingCapture?.osVersion;
 
     _descController = TextEditingController(text: widget.existingCapture?.description ?? '');
     _descController.addListener(_updateButtonState);
@@ -56,6 +64,35 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
     _selectedQuality = widget.existingCapture?.qualityScore ?? 3;
     _selectedReason = widget.existingCapture?.qualityReason;
     _shouldRetain = _initialRetain;
+
+    if (!isEditing) {
+      _loadDeviceInfo();
+    }
+  }
+
+  Future<void> _loadDeviceInfo() async {
+    try {
+      final deviceInfoPlugin = DeviceInfoPlugin();
+      if (Platform.isAndroid) {
+        final androidInfo = await deviceInfoPlugin.androidInfo;
+        if (mounted) {
+          setState(() {
+            _deviceModel = '${androidInfo.brand} ${androidInfo.model}';
+            _osVersion = 'Android ${androidInfo.version.release}';
+          });
+        }
+      } else if (Platform.isIOS) {
+        final iosInfo = await deviceInfoPlugin.iosInfo;
+        if (mounted) {
+          setState(() {
+            _deviceModel = iosInfo.utsname.machine;
+            _osVersion = '${iosInfo.systemName} ${iosInfo.systemVersion}';
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching device info: $e');
+    }
   }
 
   void _updateButtonState() {
@@ -98,6 +135,8 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
         qualityScore: _selectedQuality,
         qualityReason: _selectedReason,
         shouldRetain: _shouldRetain,
+        deviceModel: _deviceModel,
+        osVersion: _osVersion,
       );
       widget.controller.updateCapture(captureToSave);
     } else {
@@ -108,6 +147,8 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
         qualityScore: _selectedQuality, 
         qualityReason: _selectedReason,
         shouldRetain: _shouldRetain,
+        deviceModel: _deviceModel,
+        osVersion: _osVersion,
         status: CaptureStatus.inProgress,
         timestamp: DateTime.now(),
       );
@@ -402,8 +443,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
         
         if (_selectedQuality < 3)
           DropdownButtonFormField<String>(
-            // ignore: deprecated_member_use
-            value: _selectedReason,
+            initialValue: _selectedReason,
             decoration: InputDecoration(
               labelText: context.i18n.qualityReason,
               border: const OutlineInputBorder(),
