@@ -181,4 +181,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get usernameFormatLabel => '3-20 letras, numeros, y -, +, \$, @';
+
+  @override
+  String get waitingForGps => 'Esperando señal de GPS...';
+
+  @override
+  String get gpsNotReady => 'No se puede capturar: GPS no está listo.';
 }

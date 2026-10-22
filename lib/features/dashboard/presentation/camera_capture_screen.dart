@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:ecocaptura/core/constants/app_spacing.dart';
 import 'package:ecocaptura/core/l10n/app_localizations.dart';
+import 'package:ecocaptura/core/extensions/content_extensions.dart';
 import 'package:ecocaptura/core/services/telemetry_service.dart';
 import 'package:ecocaptura/utils/geo_utils.dart';
 import '../data/models/capture_model.dart'; 
@@ -105,7 +106,6 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
       statusColor = Colors.redAccent;
     }
     
-    // Just the icon, no text!
     return Icon(Icons.gps_fixed, color: statusColor, size: 16);
   }
 
@@ -153,13 +153,21 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
   Future<void> _takePicture() async {
     if (_controller == null || !_controller!.value.isInitialized) return;
     
+    final currentFrame = _telemetryNotifier.value;
+    if (currentFrame.position == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.i18n.gpsNotReady)),
+        );
+      }
+      return;
+    }
+    
     try {
-      final currentFrame = _telemetryNotifier.value;
       final double zoomLevel = _currentZoomLevel;
       final XFile photoFile = await _controller!.takePicture();
       final double fov = 75.0 / zoomLevel;
 
-      // 3. Use the captured data
       final entry = PhotoEntry(
         imagePath: photoFile.path,
         heading: currentFrame.heading,
@@ -168,9 +176,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
         fov: fov,
         zoomLevel: zoomLevel,
         rawSensors: _lastRawTelemetry,
-        gpsCoordinates: currentFrame.position != null 
-          ? "${currentFrame.position!.latitude},${currentFrame.position!.longitude}" 
-          : null,
+        gpsCoordinates: "${currentFrame.position!.latitude},${currentFrame.position!.longitude}",
         gpsAccuracy: currentFrame.position?.accuracy,
         gpsAltitude: currentFrame.position?.altitude,
         timestamp: DateTime.now(),
@@ -198,7 +204,6 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
               final isLandscape = orientation == Orientation.landscape;
               final size = MediaQuery.of(context).size;
               
-              // Keep dimensions responsive and consistent
               final double controlBarSize = isLandscape
                   ? (size.width * 0.15).clamp(80.0, 160.0)
                   : (size.height * 0.12).clamp(80.0, 160.0);
@@ -228,7 +233,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                     ),
                   ),
 
-                  // 2. Top-Left Exit Button (Symmetrical to Shutter)  
+                  // 2. Top-Left Exit Button  
                   if (Platform.isIOS)
                     SafeArea(
                       child: Align(
@@ -238,7 +243,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                           child: GestureDetector(
                             onTap: () => Navigator.of(context).pop(),
                             child: Container(
-                              width: buttonSize * 0.7, // Slightly smaller than shutter
+                              width: buttonSize * 0.7,
                               height: buttonSize * 0.7,
                               decoration: BoxDecoration(
                                 color: Colors.black.withValues(alpha: 0.4),
@@ -251,7 +256,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                       ),
                     ),
 
-                  // 3. The HUD (Top-Right, Adaptive Padding)  
+                  // 3. The HUD (Top-Right)  
                   SafeArea(
                     child: Align(
                       alignment: Alignment.topRight,
@@ -276,7 +281,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                     ),
                   ),
 
-                  // 4. The "Sticky" Control Bar
+                  // 4. The "Sticky" Control Bar (with GPS readiness check)
                   Align(
                     alignment: isLandscape ? Alignment.centerRight : Alignment.bottomCenter,
                     child: Container(
@@ -284,7 +289,13 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                       height: isLandscape ? double.infinity : controlBarSize,
                       color: Colors.black,
                       alignment: Alignment.center,
-                      child: _buildShutterButton(buttonSize),
+                      child: ValueListenableBuilder<TelemetryFrame>(
+                        valueListenable: _telemetryNotifier,
+                        builder: (context, frame, child) {
+                          final bool isLocationReady = frame.position != null;
+                          return _buildShutterButton(buttonSize, isLocationReady);
+                        },
+                      ),
                     ),
                   ),
                 ],
@@ -297,27 +308,41 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
   }
 
   // --- Shutter Button Helper ---
-  Widget _buildShutterButton(double size) {
+  Widget _buildShutterButton(double size, bool isEnabled) {
     return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapDown: (_) => isEnabled ? setState(() => _isPressed = true) : null,
       onTapUp: (_) {
+        if (!isEnabled) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(context.i18n.waitingForGps)),
+          );
+          return;
+        }
         setState(() => _isPressed = false);
         _takePicture();
       },
       onTapCancel: () => setState(() => _isPressed = false),
       child: AnimatedScale(
-        scale: _isPressed ? 0.9 : 1.0,
+        scale: _isPressed && isEnabled ? 0.9 : 1.0,
         duration: const Duration(milliseconds: 100),
         curve: Curves.easeOut,
         child: Container(
           width: size,
           height: size,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.8),
+            color: isEnabled 
+                ? Colors.white.withValues(alpha: 0.8) 
+                : Colors.grey.withValues(alpha: 0.4),
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.white.withValues(alpha: 0.9), width: 3),
+            border: Border.all(
+              color: isEnabled ? Colors.white.withValues(alpha: 0.9) : Colors.grey.withValues(alpha: 0.5), 
+              width: 3,
+            ),
             boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 6)],
           ),
+          child: !isEnabled 
+              ? const Center(child: Icon(Icons.block, color: Colors.redAccent, size: 28))
+              : null,
         ),
       ),
     );

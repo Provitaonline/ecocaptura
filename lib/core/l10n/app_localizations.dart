@@ -403,6 +403,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'3-20 letters, numbers, and -, +, \$, @'**
   String get usernameFormatLabel;
+
+  /// No description provided for @waitingForGps.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for GPS location lock...'**
+  String get waitingForGps;
+
+  /// No description provided for @gpsNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot capture: GPS location not ready.'**
+  String get gpsNotReady;
 }
 
 class _AppLocalizationsDelegate
