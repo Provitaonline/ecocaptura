@@ -23,52 +23,81 @@ class _AboutPageState extends State<AboutPage> {
 
   Future<void> _initPackageInfo() async {
     final info = await PackageInfo.fromPlatform();
-    setState(() {
-      _version = "${info.version}+${info.buildNumber}";
-    });
+    if (mounted) {
+      setState(() {
+        _version = "${info.version}+${info.buildNumber}";
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     
     return Scaffold(
       appBar: AppBar(title: Text(l10n.menuAbout)),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          children: [
-            Icon(Icons.eco, color: Colors.teal.shade300, size: 50),
-            const SizedBox(height: 20),
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight - 48.0, // Account for padding
+                ),
+                child: IntrinsicHeight(
+                  child: Column(
+                    children: [
+                      Icon(Icons.eco, color: Colors.teal.shade300, size: 50),
+                      const SizedBox(height: 20),
 
-            Text("ecocaptura", style: Theme.of(context).textTheme.headlineMedium),
-            Text(l10n.aboutAppVersion(_version)),
-            
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 30.0),
-              child: Divider(),
-            ),
+                      Text("ecocaptura", style: theme.textTheme.headlineMedium),
+                      const SizedBox(height: 4),
+                      Text(l10n.aboutAppVersion(_version)),
+                      
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 24.0),
+                        child: Divider(),
+                      ),
 
-            Text(
-              l10n.aboutDescription,
-              style: Theme.of(context).textTheme.bodyLarge,
-              textAlign: TextAlign.center,
-            ),
-            
-            const Spacer(),
-            
-            Text(l10n.aboutContactLabel),
-            TextButton(
-              onPressed: () => _launchSupportEmail(AppInfo.supportEmail), 
-              child: const Text(AppInfo.supportEmail),
-            ),
-            const SizedBox(height: 10),
-            Image.asset(
-              'assets/org_logo.png',
-              height: 100,
-              fit: BoxFit.contain,
-            ),
-          ],
+                      // Explicit style fallback to ensure text visibility
+                      Text(
+                        l10n.aboutDescription,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: theme.colorScheme.onSurface,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      
+                      const Spacer(),
+                      const SizedBox(height: 24),
+                      
+                      Text(
+                        l10n.aboutContactLabel,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => _launchSupportEmail(AppInfo.supportEmail), 
+                        child: const Text(AppInfo.supportEmail),
+                      ),
+                      const SizedBox(height: 10),
+                      Image.asset(
+                        'assets/org_logo.png',
+                        height: 100,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const SizedBox(height: 100); // Graceful fallback if logo fails
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
