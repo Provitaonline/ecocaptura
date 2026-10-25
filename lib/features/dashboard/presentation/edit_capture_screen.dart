@@ -9,6 +9,7 @@ import './widgets/full_screen_photo_view.dart';
 import 'package:ecocaptura/core/constants/app_constants.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:ecocaptura/utils/id_generator.dart';
+import 'package:ecocaptura/utils/app_info.dart';
 
 class CaptureEditorScreen extends StatefulWidget {
   final CaptureController controller;
@@ -36,6 +37,8 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
   String? _deviceModel;
   String? _osVersion;
 
+  String? _appVersion;
+
   late int _initialQuality;
   String? _initialReason;
   late String _initialDescription;
@@ -57,6 +60,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
     // Load existing device info if editing, otherwise fetch for new capture
     _deviceModel = widget.existingCapture?.deviceModel;
     _osVersion = widget.existingCapture?.osVersion;
+    _appVersion = widget.existingCapture?.appVersion;
 
     _descController = TextEditingController(text: widget.existingCapture?.description ?? '');
     _descController.addListener(_updateButtonState);
@@ -73,12 +77,14 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
   Future<void> _loadDeviceInfo() async {
     try {
       final deviceInfoPlugin = DeviceInfoPlugin();
+      final appVersionStr = await AppInfoService.getAppVersion();
       if (Platform.isAndroid) {
         final androidInfo = await deviceInfoPlugin.androidInfo;
         if (mounted) {
           setState(() {
             _deviceModel = '${androidInfo.brand} ${androidInfo.model}';
             _osVersion = 'Android ${androidInfo.version.release}';
+            _appVersion = appVersionStr;
           });
         }
       } else if (Platform.isIOS) {
@@ -87,11 +93,16 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
           setState(() {
             _deviceModel = iosInfo.utsname.machine;
             _osVersion = '${iosInfo.systemName} ${iosInfo.systemVersion}';
+            _appVersion = appVersionStr;
           });
         }
       }
     } catch (e) {
       debugPrint('Error fetching device info: $e');
+      try {
+        final appVersionStr = await AppInfoService.getAppVersion();
+        if (mounted) setState(() => _appVersion = appVersionStr);
+      } catch (_) {}
     }
   }
 
@@ -137,6 +148,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
         shouldRetain: _shouldRetain,
         deviceModel: _deviceModel,
         osVersion: _osVersion,
+        appVersion: _appVersion,
       );
       widget.controller.updateCapture(captureToSave);
     } else {
@@ -149,6 +161,7 @@ class _CaptureEditorScreenState extends State<CaptureEditorScreen> {
         shouldRetain: _shouldRetain,
         deviceModel: _deviceModel,
         osVersion: _osVersion,
+        appVersion: _appVersion,
         status: CaptureStatus.inProgress,
         timestamp: DateTime.now(),
       );

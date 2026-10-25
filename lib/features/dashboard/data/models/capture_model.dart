@@ -78,6 +78,7 @@ class CaptureModel {
   
   String? deviceModel;
   String? osVersion;
+  String? appVersion;
 
   @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)
   CaptureStatus status;
@@ -94,6 +95,7 @@ class CaptureModel {
     this.qualityReason,
     this.deviceModel,
     this.osVersion,
+    this.appVersion,
     required this.status, 
     this.timestamp
   });
@@ -108,6 +110,7 @@ class CaptureModel {
     String? qualityReason,
     String? deviceModel,
     String? osVersion,
+    String? appVersion,
     DateTime? timestamp,
   }) {
     return CaptureModel(
@@ -119,6 +122,7 @@ class CaptureModel {
       qualityReason: (qualityReason == "") ? null : (qualityReason ?? this.qualityReason),
       deviceModel: deviceModel ?? this.deviceModel,
       osVersion: osVersion ?? this.osVersion,
+      appVersion: appVersion ?? this.appVersion,
       status: status ?? this.status,
       timestamp: timestamp ?? this.timestamp,
     );

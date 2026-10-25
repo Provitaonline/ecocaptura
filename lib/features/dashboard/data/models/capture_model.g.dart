@@ -75,6 +75,7 @@ CaptureModel _$CaptureModelFromJson(Map<String, dynamic> json) => CaptureModel(
   qualityReason: json['qualityReason'] as String?,
   deviceModel: json['deviceModel'] as String?,
   osVersion: json['osVersion'] as String?,
+  appVersion: json['appVersion'] as String?,
   status: _statusFromJson((json['status'] as num).toInt()),
   timestamp: _dateTimeFromJson(json['timestamp']),
 );
@@ -89,6 +90,7 @@ Map<String, dynamic> _$CaptureModelToJson(CaptureModel instance) =>
       'qualityReason': instance.qualityReason,
       'deviceModel': instance.deviceModel,
       'osVersion': instance.osVersion,
+      'appVersion': instance.appVersion,
       'status': _statusToJson(instance.status),
       'timestamp': _dateTimeToJson(instance.timestamp),
     };
