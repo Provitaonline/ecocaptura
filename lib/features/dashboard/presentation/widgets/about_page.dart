@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:ecocaptura/core/l10n/app_localizations.dart';
 import 'package:ecocaptura/core/constants/app_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/foundation.dart';
+import 'package:ecocaptura/utils/app_info.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -22,10 +22,10 @@ class _AboutPageState extends State<AboutPage> {
   }
 
   Future<void> _initPackageInfo() async {
-    final info = await PackageInfo.fromPlatform();
+    final version = await AppInfoService.getAppVersion();
     if (mounted) {
       setState(() {
-        _version = "${info.version}+${info.buildNumber}";
+        _version = version;
       });
     }
   }
